@@ -1,7 +1,7 @@
 /* Service worker du Planificateur de recharge EV : permet l'utilisation hors connexion.
    Seuls les fichiers de l'appli (même origine) sont mis en cache ; les services externes
    (adresses, itinéraires, météo) ne sont jamais interceptés. */
-const VERSION = 'e35dcffc41';
+const VERSION = 'f83598ed2e';
 const CACHE = 'evplan-' + VERSION;
 const FILES = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/icon-maskable-192.png', './icons/icon-maskable-512.png', './icons/apple-touch-icon.png', './icons/favicon.svg'];
 

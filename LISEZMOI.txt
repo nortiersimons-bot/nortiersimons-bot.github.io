@@ -5,6 +5,7 @@ Contenu du dossier
   manifest.webmanifest    nom, couleurs et icônes de l'application
   sw.js                   fonctionnement hors connexion
   icons/                  icônes (Android, iPhone, onglet du navigateur)
+  relais/                 deux petits scripts facultatifs pour Cloudflare Workers (voir plus bas)
   .nojekyll               nécessaire pour GitHub Pages (fichier vide)
 
 Mise en ligne : placez TOUT le contenu de ce dossier (sans le zip) sur un hébergeur
@@ -20,6 +21,63 @@ SYNCHRONISATION DE L'AGENDA PAR ADRESSE iCal SECRÈTE
 Google n'autorise pas la lecture directe d'un agenda depuis une page web. Deux solutions fiables :
   1. Sans rien installer : ouvrez l'adresse secrète dans le navigateur du téléphone, enregistrez le
      fichier .ics, puis « Importer un fichier .ics » dans l'onglet Agenda.
-  2. Synchro en un clic : déployez le script « relais-agenda.js » (fourni à part) sur Cloudflare
+  2. Synchro en un clic : déployez le script « relais/relais-agenda.js » sur Cloudflare
      Workers (gratuit), puis collez l'adresse du relais dans l'onglet Agenda > « Mon relais
      personnel » et touchez « Tester le relais ».
+
+MISES À JOUR (version 5.0 et suivantes)
+Quand vous recevez une nouvelle version, remplacez les fichiers sur l'hébergeur par ceux du nouveau
+dossier. Sur le téléphone, ouvrez l'appli puis « Borne & véhicule » > « Version et mises à jour » >
+« Vérifier les mises à jour » : si une version plus récente existe, un bouton « Recharger » apparaît.
+Vos données ne sont pas touchées par une mise à jour.
+
+BATTERIE AUTOMATIQUE : BMW CARDATA (facultatif, mode « Avancé »)
+But : que l'appli lise elle-même le niveau de batterie (et le compteur km) de la voiture, au lieu de
+le saisir à la main. Le plan se recale alors tout seul, les recharges terminées vous sont proposées
+pour le journal, et le compteur alimente le suivi des km du leasing.
+Important : cette fonction n'a pas pu être essayée avec un vrai compte BMW par l'auteur (seulement
+avec une simulation). BMW n'offre CarData que dans certains pays et pour certains modèles, et ne
+renvoie les données que pour le conducteur principal du véhicule. Si rien ne remonte, l'appli continue
+de fonctionner comme avant, avec la saisie manuelle.
+
+Étape A : côté BMW
+  1. Connectez-vous à votre compte My BMW sur le site de BMW > « Mes véhicules » > votre véhicule >
+     tuile « BMW CarData ».
+  2. « Créer un client CarData » (Create CarData Client) : notez l'identifiant client (CLIENT_ID) et
+     activez les deux accès « CarData API » et « CarData Stream » (le relais demande les deux).
+     Si le portail affiche une erreur de portée, rechargez la page et ajoutez les accès un par un,
+     en attendant environ 30 secondes entre les deux.
+  3. Le relais crée lui-même la liste de données (un « conteneur » : batterie, compteur, état de
+     charge) par l'interface de BMW. Si BMW refuse, créez-en un à la main dans le portail (rubrique de
+     sélection des données) avec au moins la batterie affichée (stateOfCharge.displayed) : le relais
+     réutilise un conteneur existant qui contient cette donnée.
+
+Étape B : le relais (gratuit, sur Cloudflare Workers)
+  1. Créez un compte gratuit sur cloudflare.com > « Workers & Pages » > « Create » > « Worker ».
+  2. Remplacez le code du Worker par le contenu de « relais/relais-cardata.js » puis « Deploy ».
+  3. « Storage & Databases » > « KV » : créez un espace (nom libre). Dans le Worker > « Settings » >
+     « Bindings » : ajoutez une liaison KV nommée exactement   CARDATA   vers cet espace.
+  4. Worker > « Settings » > « Variables and Secrets » : ajoutez deux secrets :
+       CLIENT_ID   l'identifiant client noté à l'étape A
+       RELAY_KEY   un mot de passe long de votre choix (20 caractères ou plus, au hasard)
+  5. Facultatif mais conseillé : Worker > « Settings » > « Triggers » > « Cron » : ajoutez  0 6 * * *
+     Le relais renouvelle ainsi chaque jour sa connexion à BMW (elle expire après 2 semaines sans usage).
+  6. Notez l'adresse du Worker (https://….workers.dev).
+
+Étape C : l'appli
+  1. « Borne & véhicule » > « Batterie automatique (BMW CarData) » (mode Avancé).
+  2. Collez l'adresse du relais et la clé (RELAY_KEY), choisissez le véhicule, puis « Tester le relais ».
+  3. « Connecter mon compte BMW » : l'appli affiche un code et un lien vers la page BMW. Ouvrez le lien,
+     saisissez le code, connectez-vous et autorisez. L'appli détecte l'accord toute seule.
+  4. « Lire la batterie maintenant » pour vérifier, puis cochez ce que vous voulez automatiser :
+     lecture à l'ouverture de l'appli, recalage du plan, détection des recharges pour le journal.
+
+Limites à connaître
+  - BMW autorise 50 lectures par jour : l'appli lit au plus toutes les 10 minutes et le relais garde
+    une marge (45 par jour) et mémorise la dernière réponse 5 minutes.
+  - La voiture ne remonte ses données que lorsqu'elle le décide : la batterie lue peut dater de
+    quelques minutes ou heures (l'appli affiche l'ancienneté).
+  - L'énergie d'une recharge détectée est une estimation faite à partir de la batterie : corrigez-la
+    avec la valeur lue sur la borne ou le compteur avant d'accepter.
+  - La clé du relais reste sur cet appareil ; elle n'est pas incluse dans les sauvegardes, sauf si vous
+    cochez « Inclure les adresses et clés secrètes ».
