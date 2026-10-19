@@ -376,6 +376,9 @@ main{padding-bottom:calc(112px + env(safe-area-inset-bottom,0px))}
 .toast.act.show{pointer-events:auto}
 .toast .toastBtn{background:none;border:none;color:inherit;font:inherit;font-weight:800;text-decoration:underline;min-height:44px;min-width:44px;padding:0 8px;cursor:pointer;border-radius:10px;flex-shrink:0}
 .toast .toastBtn:focus-visible{outline:2px solid currentColor;outline-offset:0}
+
+/* boutons d'une rangée : jamais plus étroits que 130 px, ils passent à la ligne */
+.calRow .btn{flex:1 1 130px}
 </style>
 </head>
 <body>
@@ -551,16 +554,21 @@ main{padding-bottom:calc(112px + env(safe-area-inset-bottom,0px))}
    <div class="cols"><div class="col">
     <div class="card">
       <div class="cardHead"><h2>Synchronisation calendrier</h2><button type="button" class="qm" data-help="help-cal" aria-expanded="false" aria-controls="help-cal" aria-label="Aide : synchronisation du calendrier">?</button></div>
-      <div class="hint helpBox" id="help-cal" hidden>Collez l'adresse iCal (secrète) de votre agenda Google (Paramètres de l'agenda → « Adresse secrète au format iCal »), ou importez un fichier .ics exporté depuis votre agenda. Les événements de la semaine avec un lieu seront transformés en trajets à valider.</div>
+      <div class="hint helpBox" id="help-cal" hidden>Collez l'adresse iCal (secrète) de votre agenda Google (Paramètres de l'agenda → « Adresse secrète au format iCal »), ou importez un fichier .ics exporté depuis votre agenda. Les événements de la semaine avec un lieu seront transformés en trajets à valider.
+        <br><br><b>Si la lecture par adresse échoue</b> (cas fréquent : Google bloque la lecture directe depuis une page web) : ouvrez l'adresse dans le navigateur du téléphone, enregistrez le fichier .ics, puis « Importer un fichier .ics ». Pour que la synchro fonctionne en un clic, créez votre relais personnel : un petit script gratuit (fourni avec l'appli, fichier relais-agenda.js) à déployer sur Cloudflare Workers ; collez ensuite son adresse dans « Mon relais personnel ». Seul ce relais, que vous contrôlez, voit votre adresse secrète.</div>
       <div class="field"><label for="calUrl">Adresse iCal du calendrier</label>
         <input type="url" id="calUrl" placeholder="https://calendar.google.com/calendar/ical/…" autocomplete="off" spellcheck="false"></div>
       <div class="checkRow"><input type="checkbox" id="calRemember" checked><label for="calRemember">Mémoriser cette adresse sur cet appareil</label></div>
       <div class="toggle"><label for="calProxy">Essayer un proxy public si l'accès direct est bloqué</label><input type="checkbox" id="calProxy" checked></div>
-      <div class="hint warn">Google n'autorise pas la lecture directe de l'agenda depuis une page web : en cas de blocage, l'adresse secrète transite par un service tiers (api.allorigins.win, puis corsproxy.io). Décochez l'option pour l'éviter et utilisez un fichier .ics.</div>
+      <div class="hint warn">Google n'autorise pas la lecture directe de l'agenda depuis une page web. Les proxys publics (api.allorigins.win, corsproxy.io, api.codetabs.com) sont souvent indisponibles ou bloqués, et ils peuvent lire tout votre agenda : décochez l'option pour l'éviter. Plus fiable et privé : votre relais personnel (ci-dessous) ou un fichier .ics.</div>
+      <div class="field" style="margin-top:8px"><label for="calRelay">Mon relais personnel (facultatif)</label>
+        <input type="url" id="calRelay" placeholder="https://mon-relais.mon-compte.workers.dev" autocomplete="off" spellcheck="false"></div>
+      <div class="calRow"><button type="button" class="btn sec small" id="calRelayTest">Tester le relais</button></div>
+      <div class="hint" id="calRelayMsg" role="status"></div>
       <div class="grid" style="margin-top:8px">
-        <div class="field"><label for="calVeh">Véhicule concerné</label>
+        <div class="field full"><label for="calVeh">Véhicule concerné</label>
           <select id="calVeh"></select></div>
-        <div class="field"><label for="calWeek">Semaine</label>
+        <div class="field full"><label for="calWeek">Semaine</label>
           <select id="calWeek"><option value="0">Cette semaine</option><option value="1">Semaine prochaine</option></select></div>
       </div>
       <div class="calRow">
@@ -895,6 +903,13 @@ var validDateStr=function(s){
   var y=+m[1],mo=+m[2],d=+m[3],dt=new Date(y,mo-1,d);
   return y>=2000&&y<=2100&&dt.getFullYear()===y&&dt.getMonth()===mo-1&&dt.getDate()===d;
 };
+/* adresse du relais personnel : https uniquement, sans identifiants ni espaces */
+var cleanRelay=function(v){
+  var t=str(v,300).trim();
+  if(!t||/\s/.test(t))return '';
+  try{var u=new URL(t);if(u.protocol!=='https:'||u.username||u.password||!u.hostname)return '';}catch(e){return '';}
+  return t;
+};
 var HEX=/^#[0-9a-f]{6}$/i;
 var HM=/^([01]?\d|2[0-3]):[0-5]\d$/;
 
@@ -910,7 +925,7 @@ function defaults(){
       autoBoost:true,finish:'balanced',weatherOn:true,logPrice:null},
     veh:[{id:uid(),name:'BMW iX3 40',color:COLORS[0],cap:82.6,cons:16,ac:11,min:20,target:80}],
     favs:[],trips:[],sched:[],geo:{},me:{id:uid(),name:''},shared:[],cur:{},log:[],meteo:{t:0,lat:null,lon:null,days:{}},
-    cal:{url:'',remember:true,proxy:true,week:0,pending:[],seen:[],lastSync:null,log:null,events:[]},
+    cal:{url:'',remember:true,proxy:true,relay:'',week:0,pending:[],seen:[],lastSync:null,log:null,events:[]},
     ui:{mode:'route',planVeh:null,tVeh:null,sVeh:null,calVeh:null,vtab:null,lgVeh:null,tab:'plan',theme:'auto',hrTab:'wk',
       lastBackup:null,created:null,snooze:0,icsWeeks:'1',icsRemind:'15'}
   };
@@ -1074,7 +1089,7 @@ function sanitize(s){
       })
     };
   }).filter(function(p){return p.stops.length;});
-  s.cal.url=str(s.cal.url,2000);s.cal.remember=s.cal.remember!==false;s.cal.proxy=s.cal.proxy!==false;
+  s.cal.url=str(s.cal.url,2000);s.cal.remember=s.cal.remember!==false;s.cal.proxy=s.cal.proxy!==false;s.cal.relay=cleanRelay(s.cal.relay);
   s.cal.week=s.cal.week===1?1:0;
   s.cal.lastSync=isFinite(num(s.cal.lastSync,NaN))?num(s.cal.lastSync,null):null;
   s.cal.log=s.cal.log==null?null:str(s.cal.log,300);
@@ -1730,24 +1745,35 @@ function weekRange(offset){
   var w0=d.getTime(),e=new Date(d.getTime());e.setDate(e.getDate()+7);
   return {w0:w0,w1:e.getTime(),mon:new Date(w0)};
 }
-async function fetchIcs(url,allowProxy){
-  if(!/^https:\/\//i.test(url))throw new Error('l\'adresse doit commencer par https://');
-  var tries=[{u:url,via:'direct'}];
+/* adresse iCal : webcal:// et webcals:// (Apple, Outlook) sont de simples adresses https:// */
+function normIcsUrl(u){return String(u||'').trim().replace(/^webcals?:\/\//i,'https://');}
+function relayCall(relay,url){return relay.replace(/\/+$/,'')+(relay.indexOf('?')<0?'/?':'&')+'url='+encodeURIComponent(url);}
+/* Google n'autorise pas la lecture directe d'un agenda depuis une page web : on essaie, dans l'ordre, le relais
+   personnel (s'il est réglé), l'accès direct, puis les proxys publics (si la case est cochée). */
+async function fetchIcs(url,allowProxy,relay){
+  url=normIcsUrl(url);
+  if(!/^https:\/\//i.test(url))throw new Error('l\'adresse doit commencer par https:// ou webcal://');
+  var tries=[];
+  relay=cleanRelay(relay);
+  if(relay)tries.push({u:relayCall(relay,url),via:'votre relais',kind:'relais'});
+  tries.push({u:url,via:'direct',kind:'direct'});
   if(allowProxy){
-    tries.push({u:'https://api.allorigins.win/raw?url='+encodeURIComponent(url),via:'proxy allorigins'});
-    tries.push({u:'https://corsproxy.io/?'+encodeURIComponent(url),via:'proxy corsproxy'});
+    tries.push({u:'https://api.allorigins.win/raw?url='+encodeURIComponent(url),via:'proxy allorigins',kind:'proxy'});
+    tries.push({u:'https://corsproxy.io/?url='+encodeURIComponent(url),via:'proxy corsproxy',kind:'proxy'});
+    tries.push({u:'https://api.codetabs.com/v1/proxy/?quest='+encodeURIComponent(url),via:'proxy codetabs',kind:'proxy'});
   }
-  var lastErr='';
+  var errs=[];
   for(var i=0;i<tries.length;i++){
+    var t=tries[i],lab=t.kind==='direct'?'accès direct':(t.kind==='relais'?'votre relais':t.via);
     try{
-      var r=await fetchTimeout(tries[i].u,12000);
-      if(!r.ok){lastErr='HTTP '+r.status;continue;}
-      var t=await r.text();
-      if(/BEGIN:VCALENDAR/.test(t))return {text:t,via:tries[i].via};
-      lastErr='réponse inattendue';
-    }catch(e){lastErr=(tries[i].via==='direct'?'accès direct bloqué par le navigateur':'proxy injoignable');}
+      var r=await fetchTimeout(t.u,12000);
+      var txt=await r.text();
+      if(r.ok&&/BEGIN:VCALENDAR/.test(txt))return {text:txt,via:t.via};
+      if(!r.ok){errs.push(lab+' : erreur '+r.status+(t.kind==='relais'&&txt?' ('+txt.replace(/\s+/g,' ').trim().slice(0,90)+')':''));continue;}
+      errs.push(lab+' : la réponse n\'est pas un calendrier');
+    }catch(e){errs.push(lab+' : '+(t.kind==='direct'?'bloqué par le navigateur (Google n\'autorise pas la lecture directe)':'injoignable'));}
   }
-  throw new Error('impossible de lire l\'agenda ('+lastErr+'). Exportez plutôt un fichier .ics depuis Google Agenda et importez-le ici.');
+  throw new Error('impossible de lire l\'agenda. '+errs.join(' · ')+'. Solution fiable : ouvrez l\'adresse dans le navigateur du téléphone, enregistrez le fichier .ics, puis utilisez « Importer un fichier .ics ».');
 }
 
 /* ---------------------------------------------------------------------
@@ -2560,6 +2586,23 @@ function handleIcs(text,source){
 $('calUrl').addEventListener('input',function(){if($('calRemember').checked){S.cal.url=this.value.trim();save();}});
 $('calRemember').addEventListener('change',function(){S.cal.remember=this.checked;S.cal.url=this.checked?$('calUrl').value.trim():'';save();});
 $('calProxy').addEventListener('change',function(){S.cal.proxy=this.checked;save();});
+function relayMsg(t,err){var e=$('calRelayMsg');e.textContent=t||'';e.className='hint'+(err?' warn':'');}
+$('calRelay').addEventListener('change',function(){
+  var raw=this.value.trim(),v=cleanRelay(raw);
+  if(raw&&!v){relayMsg('Adresse non valide : elle doit commencer par https:// (ex. https://relais.mon-compte.workers.dev).',true);this.value=S.cal.relay;return;}
+  S.cal.relay=v;this.value=v;save();relayMsg(v?'Relais enregistré. Utilisez « Tester le relais » pour vérifier qu\'il répond.':'',false);
+});
+$('calRelayTest').addEventListener('click',async function(){
+  var v=cleanRelay($('calRelay').value);
+  if(!v){relayMsg('Collez d\'abord l\'adresse de votre relais.',true);return;}
+  this.disabled=true;relayMsg('Test en cours…',false);
+  try{
+    var r=await fetchTimeout(v.replace(/\/+$/,'')+(v.indexOf('?')<0?'/?':'&')+'ping=1',9000),t=await r.text();
+    if(r.ok&&/relais-agenda ok/.test(t))relayMsg('Le relais répond correctement.',false);
+    else relayMsg('Le relais a répondu, mais pas comme prévu (erreur '+r.status+'). Vérifiez que le script fourni a bien été collé puis déployé.',true);
+  }catch(e){relayMsg('Le relais est injoignable : vérifiez l\'adresse et que le script est bien déployé.',true);}
+  this.disabled=false;
+});
 $('calWeek').addEventListener('change',function(){S.cal.week=+this.value;save();});
 $('calSync').addEventListener('click',async function(){
   if(calBusy)return;
@@ -2567,7 +2610,7 @@ $('calSync').addEventListener('click',async function(){
   if(!url){toast('Collez d\'abord l\'adresse iCal');return;}
   calBusy=true;this.disabled=true;
   $('calStatus').innerHTML='<div class="empty">Lecture de l\'agenda…</div>';
-  try{var r=await fetchIcs(url,$('calProxy').checked);handleIcs(r.text,r.via==='direct'?'Accès direct':'Via '+r.via);}
+  try{var r=await fetchIcs(url,$('calProxy').checked,S.cal.relay);handleIcs(r.text,r.via==='direct'?'Accès direct':'Via '+r.via);}
   catch(e){
     $('calStatus').innerHTML='<div class="alertMsg">Import impossible : '+esc(e.message)+'</div>';
   }
@@ -3832,7 +3875,7 @@ function refreshAll(){
   applyTheme();
   fillSelects();
   $('calUrl').value=S.cal.remember?S.cal.url:'';
-  $('calRemember').checked=!!S.cal.remember;$('calProxy').checked=!!S.cal.proxy;$('calWeek').value=String(S.cal.week||0);
+  $('calRemember').checked=!!S.cal.remember;$('calProxy').checked=!!S.cal.proxy;$('calRelay').value=S.cal.relay;$('calWeek').value=String(S.cal.week||0);
   $('meName').value=S.me.name;
   resetDraft();
   renderVeh();renderCalStatus();renderReview();

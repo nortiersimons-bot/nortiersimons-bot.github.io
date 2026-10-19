@@ -15,3 +15,11 @@ dans un sous-dossier. Ensuite, ouvrez l'adresse sur le téléphone :
 
 Vos données restent sur le téléphone (rien n'est envoyé à un serveur). Pensez à
 exporter une sauvegarde de temps en temps (onglet « Borne & véhicule »).
+
+SYNCHRONISATION DE L'AGENDA PAR ADRESSE iCal SECRÈTE
+Google n'autorise pas la lecture directe d'un agenda depuis une page web. Deux solutions fiables :
+  1. Sans rien installer : ouvrez l'adresse secrète dans le navigateur du téléphone, enregistrez le
+     fichier .ics, puis « Importer un fichier .ics » dans l'onglet Agenda.
+  2. Synchro en un clic : déployez le script « relais-agenda.js » (fourni à part) sur Cloudflare
+     Workers (gratuit), puis collez l'adresse du relais dans l'onglet Agenda > « Mon relais
+     personnel » et touchez « Tester le relais ».
