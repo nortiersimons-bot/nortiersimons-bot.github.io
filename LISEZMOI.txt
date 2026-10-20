@@ -19,6 +19,10 @@ exporter une sauvegarde de temps en temps (onglet « Aide » > « Réglages » >
 Trois modes d'affichage (Simplifié, Complet, Avancé) se choisissent dans « Aide » > « Réglages » ou dans
 l'assistant de démarrage. L'onglet « Aide » contient aussi la liste de tous les réglages et des tutoriels pas à pas
 (agenda Google, BMW CarData, tarifs, sauvegarde…), ainsi qu'un formulaire de contact.
+L'appli existe en français, en anglais et en néerlandais. Par défaut, elle suit la langue du
+téléphone (anglais si celle-ci n'est ni le français, ni l'anglais, ni le néerlandais) ; on peut la
+changer dans « Aide » > « Réglages » > « Langue », ou dès la première page de l'assistant.
+Le nom de l'application sur l'écran d'accueil reste « Recharge EV » dans toutes les langues.
 
 SYNCHRONISATION DE L'AGENDA PAR ADRESSE iCal SECRÈTE
 Google n'autorise pas la lecture directe d'un agenda depuis une page web. Deux solutions fiables :
@@ -96,3 +100,18 @@ puis placez-la dans la ligne  var CONTACT_KEY='';  de index.html (entre les apos
 Cette clé est publique par conception : elle ne permet que d'envoyer un message vers votre boîte.
 Tant qu'elle est vide, le formulaire s'affiche mais indique que l'envoi n'est pas encore activé
 (le message tapé reste conservé sur le téléphone).
+
+BASE DES MODÈLES DE VOITURES (onglet « Borne & véhicule » > « Mon modèle »)
+784 versions de 70 marques, intégrées à l'appli (aucune connexion nécessaire). Source principale :
+Open EV Data (https://github.com/KilowattApp/open-ev-data), licence MIT avec attribution, mise à jour
+d'avril 2025, nettoyée des fiches en double ou mal nommées. Les modèles sortis depuis (BMW iX3 Neue Klasse,
+Renault Twingo E-Tech, Kia EV5, Nissan Leaf 2025…) ont été ajoutés avec des valeurs relevées sur EV Database
+(ev-database.org). La base donne la consommation réelle moyenne ; l'appli en déduit la consommation par
+temps doux (× 0,87) et ajoute elle-même l'effet du froid.
+
+PREMIER LANCEMENT
+L'appli guide la mise en service en trois temps : un assistant de réglages (voiture choisie dans la base
+des modèles, domicile et borne, tarifs, mode d'affichage), puis une visite guidée de l'écran (11 à 13
+étapes selon le mode, environ 2 minutes), puis l'ajout du premier trajet. Une appli déjà utilisée la propose aussi une fois, à la première ouverture après la mise à jour,
+avec un mot sur les nouveautés. La visite se quitte à tout moment
+(bouton ou touche Échap) et se revoit dans « Aide » > « Réglages » > « Revoir la visite guidée ».
