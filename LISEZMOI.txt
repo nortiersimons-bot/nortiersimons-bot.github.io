@@ -15,7 +15,10 @@ dans un sous-dossier. Ensuite, ouvrez l'adresse sur le téléphone :
   iPhone (Safari)  : bouton Partager > « Sur l'écran d'accueil »
 
 Vos données restent sur le téléphone (rien n'est envoyé à un serveur). Pensez à
-exporter une sauvegarde de temps en temps (onglet « Borne & véhicule »).
+exporter une sauvegarde de temps en temps (onglet « Aide » > « Réglages » > « Sauvegarde des données »).
+Trois modes d'affichage (Simplifié, Complet, Avancé) se choisissent dans « Aide » > « Réglages » ou dans
+l'assistant de démarrage. L'onglet « Aide » contient aussi la liste de tous les réglages et des tutoriels pas à pas
+(agenda Google, BMW CarData, tarifs, sauvegarde…), ainsi qu'un formulaire de contact.
 
 SYNCHRONISATION DE L'AGENDA PAR ADRESSE iCal SECRÈTE
 Google n'autorise pas la lecture directe d'un agenda depuis une page web. Deux solutions fiables :
@@ -24,14 +27,17 @@ Google n'autorise pas la lecture directe d'un agenda depuis une page web. Deux s
   2. Synchro en un clic : déployez le script « relais/relais-agenda.js » sur Cloudflare
      Workers (gratuit), puis collez l'adresse du relais dans l'onglet Agenda > « Mon relais
      personnel » et touchez « Tester le relais ».
+  Pas à pas détaillé dans l'appli : « Aide » > « Tutoriels » > « Connecter un agenda Google ».
 
 MISES À JOUR (version 5.0 et suivantes)
 Quand vous recevez une nouvelle version, remplacez les fichiers sur l'hébergeur par ceux du nouveau
-dossier. Sur le téléphone, ouvrez l'appli puis « Borne & véhicule » > « Version et mises à jour » >
+dossier. Sur le téléphone, ouvrez l'appli puis « Aide » > « Réglages » > « Version et mises à jour » >
 « Vérifier les mises à jour » : si une version plus récente existe, un bouton « Recharger » apparaît.
 Vos données ne sont pas touchées par une mise à jour.
 
 BATTERIE AUTOMATIQUE : BMW CARDATA (facultatif, mode « Avancé »)
+(Le même mode d'emploi, avec boutons « Copier le code » et générateur de clé, se trouve dans l'appli :
+onglet « Aide » > « Tutoriels » > « Batterie automatique BMW CarData ».)
 But : que l'appli lise elle-même le niveau de batterie (et le compteur km) de la voiture, au lieu de
 le saisir à la main. Le plan se recale alors tout seul, les recharges terminées vous sont proposées
 pour le journal, et le compteur alimente le suivi des km du leasing.
@@ -81,3 +87,12 @@ Limites à connaître
     avec la valeur lue sur la borne ou le compteur avant d'accepter.
   - La clé du relais reste sur cet appareil ; elle n'est pas incluse dans les sauvegardes, sauf si vous
     cochez « Inclure les adresses et clés secrètes ».
+
+FORMULAIRE DE CONTACT (onglet « Aide » > « Contact »)
+Les messages sont envoyés par le service gratuit Web3Forms, sans que votre adresse e-mail
+apparaisse dans l'appli. Pour l'activer, il faut une « clé d'accès » Web3Forms (gratuite, 250
+messages par mois) : créez-la sur web3forms.com avec l'adresse qui doit recevoir les messages,
+puis placez-la dans la ligne  var CONTACT_KEY='';  de index.html (entre les apostrophes).
+Cette clé est publique par conception : elle ne permet que d'envoyer un message vers votre boîte.
+Tant qu'elle est vide, le formulaire s'affiche mais indique que l'envoi n'est pas encore activé
+(le message tapé reste conservé sur le téléphone).

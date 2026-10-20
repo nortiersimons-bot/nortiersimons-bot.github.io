@@ -108,6 +108,10 @@ async function jetonValable(env, forcer) {
     refresh_token: t.refresh,
   });
   if (!r.ok || !r.j.access_token) {
+    /* une autre requête (autre appareil, déclencheur Cron) a peut-être renouvelé les jetons au même moment :
+       BMW n'accepte alors plus l'ancien jeton de rafraîchissement. On reprend les nouveaux avant de conclure. */
+    const autre = await lire(env, 'tokens');
+    if (autre && autre.refresh && autre.refresh !== t.refresh && autre.access && Date.now() < autre.exp - 60000) return autre.access;
     if (r.statut === 400 || r.statut === 401) await env.CARDATA.delete('tokens'); // connexion perdue : il faudra se reconnecter
     return null;
   }

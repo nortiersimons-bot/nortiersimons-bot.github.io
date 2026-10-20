@@ -213,7 +213,8 @@ main{padding:clamp(12px,4vw,20px);display:flex;flex-direction:column;gap:16px;ma
 .vehForm .grid,.pctGrid,.calBox .grid{align-items:end}
 .stop .timeIn{width:120px}
 /* le bas de page reste toujours visible au-dessus de la barre d'onglets fixe */
-main{padding-bottom:calc(112px + env(safe-area-inset-bottom,0px))}
+main{padding-bottom:calc(var(--tabsH,calc(68px + env(safe-area-inset-bottom,0px))) + 44px)}
+.tabs{flex-wrap:wrap}
 /* un élément qui reçoit le focus ne doit jamais rester caché sous la barre d'onglets fixe ni sous un message (WCAG 2.4.11) */
 html{scroll-padding-bottom:210px;scroll-padding-top:12px}
 .tabs button{padding-left:0;padding-right:0}
@@ -443,7 +444,17 @@ a.btn{display:inline-flex;align-items:center;justify-content:center;text-decorat
 /* ===== affichage : simple / avancé, taille du texte, contraste ===== */
 :root[data-fs="1"]{--fs:1.15}
 :root[data-fs="2"]{--fs:1.3}
-body.simple .advOnly{display:none!important}
+/* trois modes : Simplifié (lvl0) ⊂ Complet (lvl1) ⊂ Avancé (lvl2) */
+body:not(.lvl2) .advOnly{display:none!important}
+body.lvl0 .fullOnly{display:none!important}
+/* le Simplifié garde ce qui existe déjà : plusieurs véhicules créés avant, calendrier de charge déjà choisi */
+body.lvl0:not(.multi) .multiVeh,body.lvl0:not(.multi) #vehTabs,body.lvl0 #vehTabs .add{display:none!important}
+body.lvl0:not(.schedOn) .modeCard{display:none!important}
+.badge.lvC{background:var(--warn-bg);color:var(--warn-text)}
+.wzLvl{border:1px solid var(--line);border-radius:14px;padding:10px 14px;margin:12px 0 0}
+.wzLvl legend{font-weight:700;padding:0 4px}
+.wzLvl label{display:flex;gap:10px;align-items:flex-start;padding:6px 0;cursor:pointer;font-size:calc(14px*var(--fs,1));line-height:1.45}
+.wzLvl input{margin-top:4px;width:18px;height:18px;flex:none}
 .tab{overflow-wrap:anywhere}
 .subnav button,.tabs button{overflow-wrap:normal;hyphens:none}
 
@@ -501,8 +512,8 @@ body.simple .advOnly{display:none!important}
 /* navigation et cibles plus grandes avec un texte agrandi */
 /* texte agrandi : la barre du bas passe sur deux rangées de trois boutons pour que les libellés tiennent */
 :root[data-fs="1"] .tabs,:root[data-fs="2"] .tabs{flex-wrap:wrap}
-:root[data-fs="1"] .tabs button,:root[data-fs="2"] .tabs button{flex:1 1 30%}
-:root[data-fs="1"] main,:root[data-fs="2"] main{padding-bottom:calc(190px + env(safe-area-inset-bottom,0px))}
+:root[data-fs="1"] .tabs button,:root[data-fs="2"] .tabs button{flex:1 1 22%}
+:root[data-fs="1"] main,:root[data-fs="2"] main{padding-bottom:calc(var(--tabsH,calc(146px + env(safe-area-inset-bottom,0px))) + 44px)}
 :root[data-fs="2"] .subnav{grid-template-columns:1fr}
 @media (max-width:360px){:root[data-fs="1"] .subnav{grid-template-columns:1fr}}
 
@@ -553,6 +564,53 @@ body.simple .advOnly{display:none!important}
 .propRow p{font-size:calc(14px*var(--fs,1));line-height:1.45;margin-bottom:8px}
 .propRow .field{margin-bottom:8px}
 .tnCar{font-size:calc(13px*var(--fs,1));color:var(--muted2);margin-top:6px;line-height:1.4}
+/* ---------- onglet Aide ---------- */
+#tab-help>.subnav{margin-bottom:14px}
+.hv>.card:first-child,.hv .cols{margin-top:0}
+.slotsBox.sb0{margin-top:0;padding-top:0;border-top:none}
+.okTxt{color:var(--ok-text);font-weight:700}
+.warnTxt{color:var(--warn-text);font-weight:700}
+.hsG{margin:16px 0 6px;font-size:calc(14px*var(--fs,1));color:var(--muted);text-transform:uppercase;letter-spacing:.04em;font-weight:700}
+.hsList{list-style:none;margin:0;padding:0}
+.hsItem{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.hsItem:first-child{border-top:none}
+.hsTxt{flex:1;min-width:0}
+.hsTxt>b{color:var(--text)}
+.hsTxt .badge{margin-left:4px;vertical-align:1px}
+.hsWhere{display:block;font-size:calc(12px*var(--fs,1));color:var(--brand-text);margin-top:2px}
+.hsItem .btn{flex:none}
+@media (max-width:360px){.hsItem{flex-wrap:wrap}.hsItem .btn{margin-left:auto}}
+:root[data-fs="2"] .hsItem{flex-wrap:wrap}
+:root[data-fs="2"] .hsItem .btn{margin-left:auto}
+.tutoList .acc{margin-top:10px}
+.tuto>summary{flex-wrap:wrap;gap:2px 10px}
+.tuMeta{display:block;width:100%;font-weight:400;color:var(--muted2);font-size:calc(12px*var(--fs,1))}
+.tuto h3{margin:16px 0 6px;font-size:calc(15px*var(--fs,1))}
+.tuto .accBody>p{margin:8px 0}
+.tuSteps{margin:6px 0 6px 22px;padding:0}
+.tuSteps>li{margin:0 0 10px;line-height:1.5}
+.tuSteps>li .btn{margin-top:6px;margin-left:4px}
+.tuFaq{margin:6px 0 6px 18px;padding:0}
+.tuFaq>li{margin:0 0 10px;line-height:1.5}
+.tuto code{font-size:.92em;background:var(--chip);padding:1px 5px;border-radius:6px;overflow-wrap:anywhere}
+.tuto b.ui{color:var(--text)}
+.relayBtns{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.relayBtns .btn{margin:0}
+.relayOut,.genKeyBox{margin-top:8px}
+.relayOut textarea{width:100%;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:calc(12px*var(--fs,1))}
+#genKeyOut{font-family:ui-monospace,Menlo,Consolas,monospace}
+.tuLink{margin:0 0 8px}
+.linkBtn{background:none;border:none;padding:0;color:var(--brand-text);font:inherit;text-decoration:underline;cursor:pointer;min-height:24px}
+.ctDiagBox{margin-top:8px}
+.ctDiagBox>summary{cursor:pointer;color:var(--brand-text);font-weight:600;min-height:44px;display:flex;align-items:center}
+.ctDiagBox pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:calc(12px*var(--fs,1));background:var(--surface2);border:1px solid var(--line);border-radius:10px;padding:10px;margin:6px 0}
+#ctForm .field{margin-top:10px}
+@keyframes hlGo{0%{box-shadow:0 0 0 3px #0f766e}70%{box-shadow:0 0 0 3px #0f766e}100%{box-shadow:0 0 0 0 rgba(15,118,110,0)}}
+.hlGo{animation:hlGo 2.4s ease-out;border-radius:12px}
+@media (prefers-reduced-motion:reduce){.hlGo{animation:none;outline:3px solid #0f766e;outline-offset:2px}}
+.hsAcc{margin-top:8px}
+.hsAcc .accBody{padding:4px 14px 8px}
+#helpTuHits .calRow{margin-top:4px}
 </style>
 </head>
 <body>
@@ -582,7 +640,7 @@ body.simple .advOnly{display:none!important}
       <div id="tonight"></div>
       <div class="tnLinks" data-blk="tn.links"><button type="button" class="btn sec small" data-gopv="week">Plan de la semaine</button><button type="button" class="btn sec small" data-gopv="trips" id="tnTrips">Mes trajets</button></div>
     </div>
-    <section class="card" id="carPropCard" hidden aria-labelledby="carPropTitle">
+    <section class="card advOnly" id="carPropCard" hidden aria-labelledby="carPropTitle">
       <h2 id="carPropTitle">Recharge détectée</h2>
       <div id="carProps"></div>
     </section>
@@ -593,7 +651,7 @@ body.simple .advOnly{display:none!important}
     </div>
         </div>
         <div class="col">
-    <div class="card" data-blk="grid">
+    <div class="card fullOnly" data-blk="grid">
       <div class="cardHead"><h2>Semaine en un coup d'œil</h2><button type="button" class="qm" data-help="help-grid" aria-expanded="false" aria-controls="help-grid" aria-label="Aide : semaine en un coup d'œil">?</button></div>
       <div class="hint helpBox" id="help-grid" hidden>Chaque colonne est un jour, de 0 h en haut à 24 h en bas. Les blocs colorés sont les recharges à domicile (les hachurés viennent d'autres membres du foyer). Deux blocs côte à côte se chevauchent : la borne ne charge qu'un véhicule à la fois. Le fond teinté marque les heures creuses.</div>
       <div id="weekGrid"></div>
@@ -611,15 +669,15 @@ body.simple .advOnly{display:none!important}
         <div class="col">
         <div class="card">
           <h2>Résumé de la semaine</h2>
-          <div class="field" style="margin-bottom:10px"><label for="planVeh">Véhicule affiché</label>
+          <div class="field multiVeh" style="margin-bottom:10px"><label for="planVeh">Véhicule affiché</label>
             <select id="planVeh"></select></div>
           <div class="stats" id="summary" data-blk="wk.sum"></div>
-          <div class="money" id="money" data-blk="wk.money"></div>
-          <div id="socChart" class="chartBox" data-blk="wk.chart"></div>
+          <div class="money fullOnly" id="money" data-blk="wk.money"></div>
+          <div id="socChart" class="chartBox fullOnly" data-blk="wk.chart"></div>
           <div data-blk="wk.note"><div class="note" id="weekNote"></div>
-          <div class="note fuelNote" id="fuelNote"></div></div>
+          <div class="note fuelNote fullOnly" id="fuelNote"></div></div>
         </div>
-    <div class="card" id="icsCard" data-blk="ics">
+    <div class="card fullOnly" id="icsCard" data-blk="ics">
       <div class="cardHead"><h2>Rappels dans mon agenda</h2><button type="button" class="qm" data-help="help-ics" aria-expanded="false" aria-controls="help-ics" aria-label="Aide : rappels dans l'agenda">?</button></div>
       <div class="hint helpBox" id="help-ics" hidden>Crée un fichier agenda (.ics) avec vos recharges prévues et, si vous le souhaitez, un rappel « Brancher la voiture », un rappel de préchauffage avant chaque départ et un rappel du soir pour noter la batterie (il recale le plan sur la valeur réelle). Ouvrez le fichier sur votre téléphone (Google Agenda, Samsung Calendar…) : les événements s'ajoutent à votre agenda avec leur alarme. Les heures sont celles du planning actuel, en heure locale ; si le planning change, exportez à nouveau (les événements ont un identifiant stable, la plupart des agendas les mettent alors à jour au lieu de les dupliquer).</div>
       <div class="grid">
@@ -661,7 +719,7 @@ body.simple .advOnly{display:none!important}
 
     <!-- vue 3 : saisie des trajets (ou des créneaux) -->
     <div class="pv" id="pv-trips" role="tabpanel" aria-labelledby="pvt-trips" hidden>
-    <div class="card" data-blk="mode">
+    <div class="card modeCard" data-blk="mode">
       <div class="cardHead"><h2>Mode de planification</h2><button type="button" class="qm" data-help="help-mode" aria-expanded="false" aria-controls="help-mode" aria-label="Aide : mode de planification">?</button></div>
       <div class="seg" id="modeChoice">
         <button type="button" data-pm="route" class="on" aria-pressed="true">Itinéraires</button>
@@ -702,7 +760,7 @@ body.simple .advOnly{display:none!important}
               <div class="routeSummary" id="routeSummary"></div>
               <div class="dist" id="distInfo" role="status"></div>
               <div id="legsBox"></div>
-              <div class="slotsBox">
+              <div class="slotsBox fullOnly">
                 <div class="cardHead"><h3>Recharge possible pendant ce trajet ?</h3><button type="button" class="qm" data-help="help-chg" aria-expanded="false" aria-controls="help-chg" aria-label="Aide : recharge pendant le trajet">?</button></div>
                 <div class="hint helpBox" id="help-chg" hidden>« Sur le trajet » : on recharge en route juste ce qu'il faut pour rester au-dessus du minimum. « Toute la journée » : le trajet est entièrement couvert, rien à recharger à la maison.</div>
                 <div class="choice c3" id="chargeChoice">
@@ -711,12 +769,12 @@ body.simple .advOnly{display:none!important}
                   <button type="button" data-mode="day" aria-pressed="false">Oui, toute la journée</button>
                 </div>
               </div>
-              <div class="slotsBox">
+              <div class="slotsBox fullOnly">
                 <div class="cardHead"><h3>Prêt pour (%)</h3><button type="button" class="qm" data-help="help-ready" aria-expanded="false" aria-controls="help-ready" aria-label="Aide : prêt pour">?</button></div>
                 <div class="hint helpBox" id="help-ready" hidden>Niveau de batterie que vous voulez avoir <b>au moment de partir</b>, par exemple 100 % avant un long trajet ou 70 % avant une journée chargée. Le plan charge la veille juste ce qu'il faut pour l'atteindre, même si la batterie est au-dessus du seuil de recharge ; la charge se termine peu avant le départ si le niveau est élevé. Laissez vide si le niveau habituel suffit.</div>
                 <div class="field"><input type="number" id="tripReady" min="1" max="100" step="1" inputmode="numeric" placeholder="ex. 90 (facultatif)" aria-label="Batterie voulue au départ en pourcentage"></div>
               </div>
-              <div class="slotsBox">
+              <div class="slotsBox advOnly">
                 <div class="cardHead"><h3>Batterie au départ (%)</h3><button type="button" class="qm" data-help="help-soc" aria-expanded="false" aria-controls="help-soc" aria-label="Aide : batterie au départ">?</button></div>
                 <div class="hint helpBox" id="help-soc" hidden>Niveau de batterie au moment de partir. Laissez vide pour partir à la charge cible (ou à la batterie réelle saisie dans « Ce soir »). La batterie ne doit jamais descendre sous le minimum défini dans « Borne &amp; véhicule ».</div>
                 <div class="field"><input type="number" id="tripSoc" min="0" max="100" step="1" inputmode="numeric" placeholder="ex. 30" aria-label="Batterie au départ en pourcentage"></div>
@@ -728,7 +786,7 @@ body.simple .advOnly{display:none!important}
             </div>
           </details>
         </div>
-        <div class="card" id="wiCard" data-blk="wi">
+        <div class="card fullOnly" id="wiCard" data-blk="wi">
           <div class="cardHead"><h2>Et si… ?</h2><button type="button" class="qm" data-help="help-wi" aria-expanded="false" aria-controls="help-wi" aria-label="Aide : simulation « et si »">?</button></div>
           <div class="hint helpBox" id="help-wi" hidden>Testez un trajet exceptionnel (week-end, rendez-vous lointain) sans toucher à votre plan : l'appli indique si la batterie suffit, s'il faut charger la veille et ce que cela coûte en plus. Rien n'est enregistré.</div>
           <div class="grid">
@@ -787,21 +845,23 @@ body.simple .advOnly{display:none!important}
   </section>
 
   <!-- CALENDRIER -->
-  <section class="tab" id="tab-cal" tabindex="-1" data-blk="tab.cal">
+  <section class="tab fullOnly" id="tab-cal" tabindex="-1" data-blk="tab.cal">
    <div class="cols"><div class="col">
     <div class="card">
       <div class="cardHead"><h2>Synchronisation calendrier</h2><button type="button" class="qm" data-help="help-cal" aria-expanded="false" aria-controls="help-cal" aria-label="Aide : synchronisation du calendrier">?</button></div>
       <div class="hint helpBox" id="help-cal" hidden>Collez l'adresse iCal (secrète) de votre agenda Google (Paramètres de l'agenda → « Adresse secrète au format iCal »), ou importez un fichier .ics exporté depuis votre agenda. Les événements de la semaine avec un lieu seront transformés en trajets à valider.
-        <br><br><b>Si la lecture par adresse échoue</b> (cas fréquent : Google bloque la lecture directe depuis une page web) : ouvrez l'adresse dans le navigateur du téléphone, enregistrez le fichier .ics, puis « Importer un fichier .ics ». Pour que la synchro fonctionne en un clic, créez votre relais personnel : un petit script gratuit (fourni avec l'appli, fichier relais-agenda.js) à déployer sur Cloudflare Workers ; collez ensuite son adresse dans « Mon relais personnel ». Seul ce relais, que vous contrôlez, voit votre adresse secrète.</div>
+        <br><br><b>Si la lecture par adresse échoue</b> (cas fréquent : Google bloque la lecture directe depuis une page web) : ouvrez l'adresse dans le navigateur du téléphone, enregistrez le fichier .ics, puis « Importer un fichier .ics ». Pour que la synchro fonctionne en un clic, créez votre relais personnel : un petit script gratuit (fourni avec l'appli) à déployer sur Cloudflare Workers ; collez ensuite son adresse dans « Mon relais personnel » (mode Avancé). Le tutoriel « Connecter un agenda Google » de l'onglet Aide détaille chaque étape. Seul ce relais, que vous contrôlez, voit votre adresse secrète.</div>
+      <div class="row tuLink"><button type="button" class="btn sec small" data-htu="tu-google">Tutoriel pas à pas</button></div>
       <div class="field"><label for="calUrl">Adresse iCal du calendrier</label>
         <input type="url" id="calUrl" placeholder="https://calendar.google.com/calendar/ical/…" autocomplete="off" spellcheck="false"></div>
       <div class="checkRow"><input type="checkbox" id="calRemember" checked><label for="calRemember">Mémoriser cette adresse sur cet appareil</label></div>
-      <div class="toggle"><label for="calProxy">Essayer un proxy public si l'accès direct est bloqué</label><input type="checkbox" id="calProxy" checked></div>
+      <div class="advOnly"><div class="toggle"><label for="calProxy">Essayer un proxy public si l'accès direct est bloqué</label><input type="checkbox" id="calProxy" checked></div>
       <div class="hint warn">Google n'autorise pas la lecture directe de l'agenda depuis une page web. Les proxys publics (api.allorigins.win, corsproxy.io, api.codetabs.com) sont souvent indisponibles ou bloqués, et ils peuvent lire tout votre agenda : décochez l'option pour l'éviter. Plus fiable et privé : votre relais personnel (ci-dessous) ou un fichier .ics.</div>
       <div class="field" style="margin-top:8px"><label for="calRelay">Mon relais personnel (facultatif)</label>
         <input type="url" id="calRelay" placeholder="https://mon-relais.mon-compte.workers.dev" autocomplete="off" spellcheck="false"></div>
       <div class="calRow"><button type="button" class="btn sec small" id="calRelayTest">Tester le relais</button></div>
       <div class="hint" id="calRelayMsg" role="status"></div>
+      </div>
       <div class="grid" style="margin-top:8px">
         <div class="field full"><label for="calVeh">Véhicule concerné</label>
           <select id="calVeh"></select></div>
@@ -836,7 +896,7 @@ body.simple .advOnly{display:none!important}
           <div class="field"><label for="vCap">Batterie utile (kWh)</label><input type="number" id="vCap" min="5" max="250" step="0.1" inputmode="decimal"></div>
           <div class="field"><label for="vCons">Consommation (kWh/100 km)</label><input type="number" id="vCons" min="3" max="60" step="0.1" inputmode="decimal"></div>
           <div class="field"><label for="vAc">Chargeur embarqué AC (kW)</label><input type="number" id="vAc" min="1" max="50" step="0.1" inputmode="decimal"></div>
-          <div class="field"><label for="vColor">Couleur</label><input type="color" id="vColor"></div>
+          <div class="field fullOnly"><label for="vColor">Couleur</label><input type="color" id="vColor"></div>
         </div>
         <div class="levels">
           <div class="cardHead"><h3>Niveaux de batterie</h3><button type="button" class="qm" data-help="help-levels" aria-expanded="false" aria-controls="help-levels" aria-label="Aide : niveaux de batterie">?</button></div>
@@ -849,7 +909,7 @@ body.simple .advOnly{display:none!important}
         </div>
         <div class="row" style="margin-top:12px"><button type="button" class="btn danger small" id="vDel">Supprimer ce véhicule</button></div>
       </div>
-      <div class="slotsBox advOnly" data-blk="veh.season">
+      <div class="slotsBox fullOnly" data-blk="veh.season">
         <div class="cardHead"><h3>Consommation selon la saison</h3><button type="button" class="qm" data-help="help-season" aria-expanded="false" aria-controls="help-season" aria-label="Aide : consommation selon la saison">?</button></div>
         <div class="hint helpBox" id="help-season" hidden>La consommation annoncée est mesurée par temps doux. Le froid et le chauffage l'augmentent. L'appli applique un coefficient à tous les calculs. « Automatique » utilise la température moyenne prévue pour chaque jour (Open-Meteo, service gratuit) : environ ×1,28 à 0 °C, ×1,10 à 10 °C, ×0,95 à 20 °C. Seule une position arrondie à 0,1° (≈ 10 km) est envoyée, jamais l'adresse. Sans météo, ou si vous choisissez une saison : été ×0,95, mi-saison ×1,10, hiver ×1,25 (novembre à mars : hiver ; avril, septembre et octobre : mi-saison ; mai à août : été). Les valeurs sont des ordres de grandeur.</div>
         <div class="field"><label for="season">Saison</label>
@@ -889,7 +949,7 @@ body.simple .advOnly{display:none!important}
       <div class="hint">Si l'adresse n'est pas reconnue, saisissez à la place des coordonnées GPS, par exemple 50.3123, 4.1234 (à copier depuis Google Maps : clic droit sur le lieu).</div>
       <div class="grid" style="margin-top:10px">
         <div class="field"><label for="borneKw">Puissance de la borne (kW)</label><input type="number" id="borneKw" min="1" max="50" step="0.1" inputmode="decimal"></div>
-        <div class="field"><label for="eff">Rendement de charge (%)</label><input type="number" id="eff" min="50" max="100" step="1" inputmode="numeric"></div>
+        <div class="field fullOnly"><label for="eff">Rendement de charge (%)</label><input type="number" id="eff" min="50" max="100" step="1" inputmode="numeric"></div>
       </div>
       <div class="hint">La puissance utilisée est la plus petite entre la borne et le chargeur embarqué. Le rendement tient compte des pertes entre le compteur et la batterie.</div>
     </div>
@@ -954,7 +1014,7 @@ body.simple .advOnly{display:none!important}
       <div class="note" id="solNote" style="margin-top:8px"></div>
     </div>
 
-    <div class="card advOnly" id="fuelCard" data-blk="fuel">
+    <div class="card fullOnly" id="fuelCard" data-blk="fuel">
       <div class="cardHead"><h2>Comparaison avec l'essence ou le diesel</h2><button type="button" class="qm" data-help="help-fuel" aria-expanded="false" aria-controls="help-fuel" aria-label="Aide : comparaison avec l'essence ou le diesel">?</button></div>
       <div class="hint helpBox" id="help-fuel" hidden>Pour savoir ce que vous économisez : indiquez la consommation d'un véhicule thermique comparable et le prix du litre. L'appli compare ensuite le coût de vos kilomètres en électrique (recharge à domicile) à celui du carburant. Les recharges hors domicile ne sont pas comptées.</div>
       <div class="grid">
@@ -965,7 +1025,8 @@ body.simple .advOnly{display:none!important}
 
     <div class="card advOnly" id="carCard" data-blk="carData">
       <div class="cardHead"><h2>Batterie automatique (BMW CarData)</h2><button type="button" class="qm" data-help="help-car" aria-expanded="false" aria-controls="help-car" aria-label="Aide : batterie automatique BMW CarData">?</button></div>
-      <div class="hint helpBox" id="help-car" hidden>BMW CarData permet de lire, avec votre accord, la batterie de votre voiture. Une page web ne peut pas appeler BMW directement : il faut un petit relais personnel et gratuit (fichier relais-cardata.js, à déployer sur Cloudflare Workers, mode d'emploi dans LISEZMOI.txt). Seul ce relais, que vous contrôlez, détient la connexion à votre compte BMW ; l'appli ne garde que son adresse et une clé. BMW limite les lectures à 50 par jour : l'appli lit au plus toutes les 10 minutes, à l'ouverture. Cette fonction n'a pas pu être testée avec un vrai compte BMW : si la voiture ne remonte pas de batterie, l'appli continue de fonctionner comme avant.</div>
+      <div class="hint helpBox" id="help-car" hidden>BMW CarData permet de lire, avec votre accord, la batterie de votre voiture. Une page web ne peut pas appeler BMW directement : il faut un petit relais personnel et gratuit (à déployer sur Cloudflare Workers, mode d'emploi pas à pas dans l'onglet Aide). Seul ce relais, que vous contrôlez, détient la connexion à votre compte BMW ; l'appli ne garde que son adresse et une clé. BMW limite les lectures à 50 par jour : l'appli lit au plus toutes les 10 minutes, à l'ouverture. Cette fonction n'a pas pu être testée avec un vrai compte BMW : si la voiture ne remonte pas de batterie, l'appli continue de fonctionner comme avant.</div>
+      <div class="row tuLink"><button type="button" class="btn sec small" data-htu="tu-bmw">Tutoriel pas à pas</button></div>
       <div class="field"><label for="carUrl">Adresse de mon relais BMW</label><input type="url" id="carUrl" placeholder="https://mon-relais-bmw.mon-compte.workers.dev" autocomplete="off" spellcheck="false"></div>
       <div class="field"><label for="carKey">Clé du relais</label><input type="password" id="carKey" autocomplete="new-password" spellcheck="false"></div>
       <div class="field"><label for="carVeh">Véhicule concerné</label><select id="carVeh"></select></div>
@@ -984,13 +1045,13 @@ body.simple .advOnly{display:none!important}
       <div class="note" id="carNote"></div>
     </div>
 
-    <div class="card" id="tipsCard" data-blk="tips">
+    <div class="card fullOnly" id="tipsCard" data-blk="tips">
       <div class="cardHead"><h2>Conseils pour la batterie</h2><button type="button" class="qm" data-help="help-tips" aria-expanded="false" aria-controls="help-tips" aria-label="Aide : conseils pour la batterie">?</button></div>
       <div class="hint helpBox" id="help-tips" hidden>Ces conseils sont généraux et tirés de vos réglages, de votre plan et de votre journal. Ils ne remplacent pas le manuel de votre véhicule : suivez-le en cas de doute. Vous pouvez masquer un conseil qui ne vous concerne pas.</div>
       <div id="tipsList"></div>
     </div>
 
-    <div class="card advOnly" data-blk="calc">
+    <div class="card fullOnly" data-blk="calc">
       <h2>Calculateur rapide</h2>
       <div class="hint">Temps et coût d'une recharge à la borne pour le véhicule sélectionné ci-dessus.</div>
       <div class="pctGrid">
@@ -1000,67 +1061,6 @@ body.simple .advOnly{display:none!important}
       <div class="calcBig" id="calcOut" role="status"></div>
     </div>
 
-    <div class="card">
-      <h2>Apparence</h2>
-      <div class="seg seg3" id="themeChoice">
-        <button type="button" data-theme="auto" class="on" aria-pressed="true">Automatique</button>
-        <button type="button" data-theme="light" aria-pressed="false">Clair</button>
-        <button type="button" data-theme="dark" aria-pressed="false">Sombre</button>
-      </div>
-      <div class="hint">« Automatique » suit le réglage de votre téléphone ou de votre ordinateur.</div>
-      <div class="slotsBox">
-        <h3 id="fsLabel">Taille du texte</h3>
-        <div class="seg seg3" id="fsChoice" role="group" aria-labelledby="fsLabel">
-          <button type="button" data-fs="0" class="on" aria-pressed="true">Normale</button>
-          <button type="button" data-fs="1" aria-pressed="false">Grande</button>
-          <button type="button" data-fs="2" aria-pressed="false">Très grande</button>
-        </div>
-      </div>
-      <div class="slotsBox">
-        <h3 id="ctLabel">Contraste</h3>
-        <div class="seg" id="contrastChoice" role="group" aria-labelledby="ctLabel">
-          <button type="button" data-ct="normal" class="on" aria-pressed="true">Normal</button>
-          <button type="button" data-ct="high" aria-pressed="false">Élevé</button>
-        </div>
-      </div>
-      <div class="slotsBox">
-        <div class="cardHead"><h3 id="advLabel">Affichage</h3><button type="button" class="qm" data-help="help-adv" aria-expanded="false" aria-controls="help-adv" aria-label="Aide : affichage simple ou avancé">?</button></div>
-        <div class="hint helpBox" id="help-adv" hidden>« Simple » ne montre que l'essentiel : véhicule, domicile, jours préférés, seuil de recharge et tarifs de base. « Avancé » ajoute la saison, le tarif horaire, le solaire, la comparaison carburant, le calculateur, la calibration, la batterie automatique BMW et tout ce qui touche au plan cafétéria (remboursement employeur, coût mensuel complet, km du leasing), ainsi que la personnalisation de l'affichage. Les réglages masqués restent actifs.</div>
-        <div class="seg" id="advChoice" role="group" aria-labelledby="advLabel">
-          <button type="button" data-adv="0" class="on" aria-pressed="true">Simple</button>
-          <button type="button" data-adv="1" aria-pressed="false">Avancé</button>
-        </div>
-      </div>
-      <div class="row" style="margin-top:12px"><button type="button" class="btn sec small" id="wizRestart">Relancer l'assistant de démarrage</button></div>
-    </div>
-
-    <div class="card advOnly" id="blkCard">
-      <div class="cardHead"><h2 id="blkTitle" tabindex="-1">Personnaliser l'affichage</h2><button type="button" class="qm" data-help="help-blk" aria-expanded="false" aria-controls="help-blk" aria-label="Aide : personnaliser l'affichage">?</button></div>
-      <div class="hint helpBox" id="help-blk" hidden>Cochez ce que vous voulez voir. Un bloc décoché disparaît de l'écran mais reste actif en arrière-plan : ses réglages continuent de compter dans le plan. Cela ne vaut qu'en mode Avancé (le mode Simple affiche toujours l'essentiel). Les onglets Planning et Borne &amp; véhicule restent toujours visibles, pour que vous puissiez revenir ici.</div>
-      <div class="calRow"><button type="button" class="btn sec small" id="blkAll">Tout afficher</button><button type="button" class="btn sec small" id="blkEss">Préréglage « Essentiel »</button></div>
-      <div id="blkList"></div>
-      <div class="hint" id="blkMsg" role="status"></div>
-    </div>
-
-    <div class="card">
-      <div class="cardHead"><h2>Sauvegarde des données</h2><button type="button" class="qm" data-help="help-data" aria-expanded="false" aria-controls="help-data" aria-label="Aide : sauvegarde des données">?</button></div>
-      <div class="hint helpBox" id="help-data" hidden>Vos données restent sur cet appareil, dans le navigateur. Si vous videz les données du site ou changez de téléphone, elles sont perdues : exportez régulièrement un fichier de sauvegarde. L'import remplace toutes les données actuelles.</div>
-      <div class="note" id="backupInfo"></div>
-      <div class="checkRow"><input type="checkbox" id="expUrl"><label for="expUrl">Inclure les adresses et clés secrètes (adresse iCal, clé du relais BMW)</label></div>
-      <div class="calRow">
-        <button type="button" class="btn sec small" id="dataExport">Exporter mes données</button>
-        <button type="button" class="btn sec small" id="dataImportBtn">Importer une sauvegarde</button>
-      </div>
-      <input type="file" id="dataFile" class="fileInput" accept=".json,application/json" aria-label="Fichier de sauvegarde">
-      <div class="hint" id="dataMsg" role="status"></div>
-    </div>
-
-    <div class="card" id="aboutCard">
-      <h2>Version et mises à jour</h2>
-      <div class="note" id="verInfo"></div>
-      <div class="row" style="margin-top:10px"><button type="button" class="btn sec small" id="updBtn">Vérifier les mises à jour</button><button type="button" class="btn small" id="updReload" hidden>Recharger maintenant</button></div>
-      <div class="hint" id="updMsg" role="status"></div>
-    </div>
    </div></div>
   </section>
 
@@ -1074,9 +1074,9 @@ body.simple .advOnly{display:none!important}
         <div class="field full"><label for="lgVeh">Véhicule</label><select id="lgVeh"></select></div>
         <div class="field"><label for="lgDate">Date</label><input type="date" id="lgDate"></div>
         <div class="field"><label for="lgKwh">Énergie (kWh)</label><input type="number" id="lgKwh" min="0" max="300" step="0.01" inputmode="decimal" placeholder="ex. 24,5" aria-describedby="lgKwhHint"></div>
-        <div class="field"><label for="lgP0">Batterie avant (%)</label><input type="number" id="lgP0" min="0" max="100" step="1" inputmode="numeric" placeholder="optionnel"></div>
-        <div class="field"><label for="lgP1">Batterie après (%)</label><input type="number" id="lgP1" min="0" max="100" step="1" inputmode="numeric" placeholder="optionnel"></div>
-        <div class="field"><label for="lgKm">Km depuis la recharge précédente</label><input type="number" id="lgKm" min="0" max="5000" step="1" inputmode="numeric" placeholder="optionnel"></div>
+        <div class="field fullOnly"><label for="lgP0">Batterie avant (%)</label><input type="number" id="lgP0" min="0" max="100" step="1" inputmode="numeric" placeholder="optionnel"></div>
+        <div class="field fullOnly"><label for="lgP1">Batterie après (%)</label><input type="number" id="lgP1" min="0" max="100" step="1" inputmode="numeric" placeholder="optionnel"></div>
+        <div class="field fullOnly"><label for="lgKm">Km depuis la recharge précédente</label><input type="number" id="lgKm" min="0" max="5000" step="1" inputmode="numeric" placeholder="optionnel"></div>
         <div class="field"><label for="lgNote">Note</label><input type="text" id="lgNote" maxlength="60" placeholder="optionnel"></div>
       </div>
       <div class="note" id="lgKwhHint" style="margin-top:6px">Énergie lue sur la borne ou sur le compteur (ex. 24,5).</div>
@@ -1097,19 +1097,19 @@ body.simple .advOnly{display:none!important}
       <div class="monthNav"><button type="button" class="btn sec small" id="lgPrev" aria-label="Mois précédent">‹</button><b id="lgMonth" aria-live="polite"></b><button type="button" class="btn sec small" id="lgNext" aria-label="Mois suivant">›</button></div>
       <div class="stats" id="lgStats"></div>
       <div class="lgSolde" id="lgSolde"></div>
-      <div class="note fuelNote" id="lgFuel"></div>
+      <div class="note fuelNote fullOnly" id="lgFuel"></div>
       <div class="note" id="lgWeek"></div>
       <div class="advOnly">
       <div class="field" style="margin-top:10px"><label for="lgPrice">Prix de revient moyen retenu (€/kWh)</label><input type="number" id="lgPrice" min="0" max="5" step="0.001" inputmode="decimal"></div>
       <div class="hint">Laissez vide pour utiliser le prix moyen déduit de votre planning et de vos tarifs.</div>
       </div>
-      <div class="calRow">
+      <div class="calRow fullOnly">
         <button type="button" class="btn sec small" id="lgCsv">Exporter le relevé (CSV)</button>
         <button type="button" class="btn sec small" id="lgPrint">Imprimer / PDF</button>
       </div>
       <div id="lgList"></div>
     </div>
-    <div class="card" id="yearCard" data-blk="year">
+    <div class="card fullOnly" id="yearCard" data-blk="year">
       <div class="cardHead"><h2>Bilan sur 12 mois</h2><button type="button" class="qm" data-help="help-year" aria-expanded="false" aria-controls="help-year" aria-label="Aide : bilan sur 12 mois">?</button></div>
       <div class="hint helpBox" id="help-year" hidden>Un mois par ligne, d'après les recharges de votre journal : énergie, kilomètres notés et coût réel estimé à votre prix de revient. Les km sont ceux que vous notez à chaque recharge (depuis la précédente), ils peuvent donc déborder un peu d'un mois sur l'autre.</div>
       <div id="yearBars"></div>
@@ -1154,7 +1154,7 @@ body.simple .advOnly{display:none!important}
   </section>
 
   <!-- FOYER : partage du calendrier de recharge -->
-  <section class="tab" id="tab-share" tabindex="-1" data-blk="tab.share">
+  <section class="tab fullOnly" id="tab-share" tabindex="-1" data-blk="tab.share">
    <div class="cols"><div class="col">
     <div class="card">
       <div class="cardHead"><h2>Mon calendrier à partager</h2><button type="button" class="qm" data-help="help-share" aria-expanded="false" aria-controls="help-share" aria-label="Aide : partage du calendrier">?</button></div>
@@ -1212,16 +1212,424 @@ body.simple .advOnly{display:none!important}
       <div id="favList"></div>
     </div>
   </section>
+  <!-- AIDE : réglages de l'appli, index de tous les réglages, tutoriels, contact -->
+  <section class="tab" id="tab-help" tabindex="-1">
+    <div class="subnav" role="tablist" aria-label="Rubriques de l'aide" id="helpNav">
+      <button type="button" role="tab" id="hvt-set" data-hv="set" aria-selected="true" aria-controls="hv-set">Réglages</button>
+      <button type="button" role="tab" id="hvt-tuto" data-hv="tuto" aria-selected="false" aria-controls="hv-tuto" tabindex="-1">Tutoriels</button>
+      <button type="button" role="tab" id="hvt-contact" data-hv="contact" aria-selected="false" aria-controls="hv-contact" tabindex="-1">Contact</button>
+    </div>
+
+    <!-- rubrique 1 : réglages de l'appli + index de tous les réglages -->
+    <div class="hv" id="hv-set" role="tabpanel" aria-labelledby="hvt-set">
+   <div class="cols"><div class="col">
+    <div class="card" id="dispCard">
+      <h2>Mode et apparence</h2>
+      <div class="slotsBox sb0">
+        <div class="cardHead"><h3 id="advLabel">Affichage</h3><button type="button" class="qm" data-help="help-adv" aria-expanded="false" aria-controls="help-adv" aria-label="Aide : les trois modes d'affichage">?</button></div>
+        <div class="hint helpBox" id="help-adv" hidden>Trois modes, du plus léger au plus riche ; chacun contient tout le précédent. « Simplifié » : une voiture, ses réglages de base, la carte « Ce soir », le plan de la semaine, les trajets et le journal. « Complet » ajoute l'agenda, le partage avec le foyer, les rappels, « Et si… ? », les bilans, la saison et la météo, la comparaison carburant, le calculateur et plusieurs voitures. « Avancé » ajoute le tarif horaire, le solaire, la batterie automatique BMW, tout ce qui touche au plan cafétéria (remboursement, coût mensuel complet, km du leasing), la calibration et la personnalisation de l'affichage. Changer de mode n'efface rien : un réglage caché reste actif.</div>
+        <div class="seg seg3" id="advChoice" role="group" aria-labelledby="advLabel">
+          <button type="button" data-lvl="0" class="on" aria-pressed="true">Simplifié</button>
+          <button type="button" data-lvl="1" aria-pressed="false">Complet</button>
+          <button type="button" data-lvl="2" aria-pressed="false">Avancé</button>
+        </div>
+        <div class="note" id="advNow" style="margin-top:6px"></div>
+      </div>
+      <div class="slotsBox">
+        <h3 id="thLabel">Thème</h3>
+        <div class="seg seg3" id="themeChoice" role="group" aria-labelledby="thLabel">
+          <button type="button" data-theme="auto" class="on" aria-pressed="true">Automatique</button>
+          <button type="button" data-theme="light" aria-pressed="false">Clair</button>
+          <button type="button" data-theme="dark" aria-pressed="false">Sombre</button>
+        </div>
+        <div class="hint">« Automatique » suit le réglage de votre téléphone ou de votre ordinateur.</div>
+      </div>
+      <div class="slotsBox">
+        <h3 id="fsLabel">Taille du texte</h3>
+        <div class="seg seg3" id="fsChoice" role="group" aria-labelledby="fsLabel">
+          <button type="button" data-fs="0" class="on" aria-pressed="true">Normale</button>
+          <button type="button" data-fs="1" aria-pressed="false">Grande</button>
+          <button type="button" data-fs="2" aria-pressed="false">Très grande</button>
+        </div>
+      </div>
+      <div class="slotsBox">
+        <h3 id="ctLabel">Contraste</h3>
+        <div class="seg" id="contrastChoice" role="group" aria-labelledby="ctLabel">
+          <button type="button" data-ct="normal" class="on" aria-pressed="true">Normal</button>
+          <button type="button" data-ct="high" aria-pressed="false">Élevé</button>
+        </div>
+      </div>
+      <div class="row" style="margin-top:12px"><button type="button" class="btn sec small" id="wizRestart">Relancer l'assistant de démarrage</button></div>
+    </div>
+
+    <div class="card" id="findCard">
+      <div class="cardHead"><h2 id="findTitle">Tous les réglages</h2><button type="button" class="qm" data-help="help-find" aria-expanded="false" aria-controls="help-find" aria-label="Aide : tous les réglages">?</button></div>
+      <div class="hint helpBox" id="help-find" hidden>La liste complète de ce que vous pouvez régler dans l'appli, avec l'endroit où le trouver. « Y aller » ouvre le bon onglet et met le réglage en évidence. Un réglage marqué « Avancé » passe l'appli en mode Avancé ; un bloc que vous aviez masqué est réaffiché.</div>
+      <div class="field"><label for="helpQ">Rechercher un réglage ou un tutoriel</label>
+        <input type="search" id="helpQ" placeholder="ex. heures creuses, BMW, sauvegarde" autocomplete="off" spellcheck="false" aria-describedby="helpQn"></div>
+      <div class="note" id="helpQn" role="status"></div>
+      <p class="note" id="helpMore" hidden></p>
+      <div id="helpTuHits"></div>
+      <div id="helpIndex"></div>
+    </div>
+   </div><div class="col">
+    <div class="card advOnly" id="blkCard">
+      <div class="cardHead"><h2 id="blkTitle" tabindex="-1">Personnaliser l'affichage</h2><button type="button" class="qm" data-help="help-blk" aria-expanded="false" aria-controls="help-blk" aria-label="Aide : personnaliser l'affichage">?</button></div>
+      <div class="hint helpBox" id="help-blk" hidden>Cochez ce que vous voulez voir. Un bloc décoché disparaît de l'écran mais reste actif en arrière-plan : ses réglages continuent de compter dans le plan. Cela ne vaut qu'en mode Avancé ; les modes Simplifié et Complet gardent leur sélection fixe. Les onglets Planning, Borne &amp; véhicule et Aide restent toujours visibles, pour que vous puissiez revenir ici.</div>
+      <div class="calRow"><button type="button" class="btn sec small" id="blkAll">Tout afficher</button><button type="button" class="btn sec small" id="blkEss">Préréglage « Essentiel »</button></div>
+      <div id="blkList"></div>
+      <div class="hint" id="blkMsg" role="status"></div>
+    </div>
+
+    <div class="card" id="dataCard">
+      <div class="cardHead"><h2>Sauvegarde des données</h2><button type="button" class="qm" data-help="help-data" aria-expanded="false" aria-controls="help-data" aria-label="Aide : sauvegarde des données">?</button></div>
+      <div class="hint helpBox" id="help-data" hidden>Vos données restent sur cet appareil, dans le navigateur. Si vous videz les données du site ou changez de téléphone, elles sont perdues : exportez régulièrement un fichier de sauvegarde. L'import remplace toutes les données actuelles.</div>
+      <div class="note" id="backupInfo"></div>
+      <div class="checkRow fullOnly"><input type="checkbox" id="expUrl"><label for="expUrl">Inclure les adresses et clés secrètes (adresse iCal, clé du relais BMW)</label></div>
+      <div class="calRow">
+        <button type="button" class="btn sec small" id="dataExport">Exporter mes données</button>
+        <button type="button" class="btn sec small" id="dataImportBtn">Importer une sauvegarde</button>
+      </div>
+      <input type="file" id="dataFile" class="fileInput" accept=".json,application/json" aria-label="Fichier de sauvegarde">
+      <div class="hint" id="dataMsg" role="status"></div>
+    </div>
+
+    <div class="card" id="aboutCard">
+      <h2>Version et mises à jour</h2>
+      <div class="note" id="verInfo"></div>
+      <div class="row" style="margin-top:10px"><button type="button" class="btn sec small" id="updBtn">Vérifier les mises à jour</button><button type="button" class="btn small" id="updReload" hidden>Recharger maintenant</button></div>
+      <div class="hint" id="updMsg" role="status"></div>
+      <div class="note" style="margin-top:10px">Vos données restent sur cet appareil : l'appli n'a pas de compte et n'envoie rien à un serveur, sauf les services que vous utilisez vous-même (calcul des distances, météo, agenda, relais, formulaire de contact).</div>
+    </div>
+   </div></div>
+    </div>
+
+    <!-- rubrique 2 : tutoriels pas à pas -->
+    <div class="hv" id="hv-tuto" role="tabpanel" aria-labelledby="hvt-tuto" hidden>
+    <div class="card">
+      <h2>Tutoriels pas à pas</h2>
+      <p class="note">Chaque tutoriel se suit dans l'ordre. Les noms en gras sont ceux que vous verrez dans l'appli ; les boutons « Y aller » ouvrent directement le bon réglage. Les noms entre guillemets sont ceux d'autres sites (Google, BMW, Cloudflare), qui peuvent changer légèrement avec le temps.</p>
+      <div class="tutoList" id="tutoList">
+
+      <details class="acc tuto" id="tu-start">
+        <summary>Bien démarrer en 5 minutes<span class="tuMeta">Pour tout le monde · 5 min</span></summary>
+        <div class="accBody">
+          <p>Le but : obtenir un premier plan de recharge fiable. Tout se modifie ensuite à volonté.</p>
+          <ol class="tuSteps">
+            <li>À la première ouverture, un assistant en 4 étapes vous accueille dans <b class="ui">Planning</b> : votre voiture, le domicile et la borne, les tarifs, puis un récapitulatif. Vous pouvez le relancer à tout moment avec <b class="ui">Relancer l'assistant de démarrage</b>. <button type="button" class="btn sec small" data-hgo="wizard">Y aller</button></li>
+            <li>Ouvrez <b class="ui">Borne &amp; véhicule</b>, carte <b class="ui">Véhicules</b>. Renseignez la <b class="ui">Batterie utile (kWh)</b> (la capacité nette, indiquée sur la fiche technique), la <b class="ui">Consommation (kWh/100 km)</b> (celle de l'ordinateur de bord sur un mois est la plus juste) et le <b class="ui">Chargeur embarqué AC (kW)</b>. <button type="button" class="btn sec small" data-hgo="vCap">Y aller</button></li>
+            <li>Réglez les trois <b class="ui">Niveaux de batterie</b> : le <b class="ui">Minimum, alarme (%)</b> (l'appli prévient si un trajet ferait descendre dessous), le <b class="ui">Seuil de recharge (%)</b> (en dessous, une recharge est programmée) et la <b class="ui">Charge cible (%)</b> (le niveau visé ; 80 % suffit au quotidien pour la plupart des voitures). <button type="button" class="btn sec small" data-hgo="vTrig">Y aller</button></li>
+            <li>Dans <b class="ui">Borne &amp; domicile</b>, saisissez l'adresse puis touchez <b class="ui">Vérifier l'adresse</b>. Indiquez la <b class="ui">Puissance de la borne (kW)</b> (souvent 7,4 kW en monophasé, 11 kW en triphasé) et, en mode Complet, le <b class="ui">Rendement de charge (%)</b> (environ 90 % si vous ne le connaissez pas). <button type="button" class="btn sec small" data-hgo="homeAddr">Y aller</button></li>
+            <li>Dans <b class="ui">Tarifs électricité</b>, recopiez vos prix de facture, TVA comprise : <b class="ui">Heures pleines (€/kWh)</b> et <b class="ui">Heures creuses (€/kWh)</b>, puis vérifiez les <b class="ui">Plages d'heures creuses (en semaine)</b>. Le tutoriel « Régler vos tarifs » détaille les autres cas. <button type="button" class="btn sec small" data-hgo="tHp">Y aller</button></li>
+            <li>Facultatif : cochez vos <b class="ui">Jours préférés de charge</b> (ceux où la voiture dort à la maison). <button type="button" class="btn sec small" data-hgo="dayPref">Y aller</button></li>
+            <li>Ajoutez vos trajets habituels dans <b class="ui">Planning</b> &gt; <b class="ui">Trajets</b> (voir le tutoriel « Encoder vos trajets »). Le plan apparaît aussitôt dans <b class="ui">Aujourd'hui</b>, carte <b class="ui">Ce soir</b>.</li>
+            <li>Chaque soir, notez la batterie affichée par la voiture dans <b class="ui">Ce soir</b> : le plan se recale sur la valeur réelle. Avec une BMW compatible, la lecture peut être automatique (tutoriel « Batterie automatique BMW CarData »).</li>
+          </ol>
+        </div>
+      </details>
+
+      <details class="acc tuto" id="tu-install">
+        <summary>Installer l'appli sur votre téléphone<span class="tuMeta">Pour tout le monde · 2 min</span></summary>
+        <div class="accBody">
+          <p>Installée, l'appli s'ouvre depuis une icône, fonctionne sans connexion et reçoit les mises à jour. Cela demande qu'elle soit ouverte depuis une adresse web qui commence par <code>https://</code>.</p>
+          <h3>Android (Chrome)</h3>
+          <ol class="tuSteps">
+            <li>Ouvrez l'adresse de l'appli dans Chrome.</li>
+            <li>Touchez le menu « ⋮ » en haut à droite, puis « Installer l'application » (ou « Ajouter à l'écran d'accueil »).</li>
+            <li>Confirmez : l'icône apparaît sur l'écran d'accueil. Ouvrez désormais l'appli depuis cette icône.</li>
+          </ol>
+          <h3>iPhone et iPad (Safari)</h3>
+          <ol class="tuSteps">
+            <li>Ouvrez l'adresse de l'appli dans Safari (pas dans une autre appli).</li>
+            <li>Touchez le bouton « Partager » (le carré avec une flèche vers le haut), puis « Sur l'écran d'accueil ».</li>
+            <li>Touchez « Ajouter ». Ouvrez désormais l'appli depuis l'icône : les données de l'icône et celles de Safari sont séparées.</li>
+          </ol>
+          <p class="note">Pour vérifier : <b class="ui">Version et mises à jour</b> indique « Cette copie est installée ». Si vous avez reçu l'appli sous forme de fichier (.html), elle fonctionne aussi en l'ouvrant dans le navigateur, mais sans installation ni mise à jour automatique : gardez le fichier au même endroit, vos données y sont liées. <button type="button" class="btn sec small" data-hgo="updBtn">Y aller</button></p>
+        </div>
+      </details>
+
+      <details class="acc tuto" id="tu-adv">
+        <summary>Choisir son mode : Simplifié, Complet ou Avancé<span class="tuMeta">Pour tout le monde · 2 min</span></summary>
+        <div class="accBody">
+          <p>L'appli a trois modes, du plus léger au plus riche. Chacun contient tout le précédent, et changer de mode n'efface rien.</p>
+          <ol class="tuSteps">
+            <li>Ouvrez <b class="ui">Aide</b> &gt; <b class="ui">Réglages</b>, carte <b class="ui">Mode et apparence</b>, puis choisissez <b class="ui">Simplifié</b>, <b class="ui">Complet</b> ou <b class="ui">Avancé</b>. <button type="button" class="btn sec small" data-hgo="advChoice">Y aller</button></li>
+            <li><b class="ui">Simplifié</b> : l'essentiel pour savoir quand brancher. Une voiture et ses réglages de base, la carte <b class="ui">Ce soir</b>, le plan de la semaine, les trajets, le journal et le relevé du mois. Les onglets <b class="ui">Agenda</b> et <b class="ui">Foyer</b> sont cachés.</li>
+            <li><b class="ui">Complet</b> : tout l'usage courant. En plus : l'agenda, le partage avec le foyer, les rappels dans l'agenda, <b class="ui">Et si… ?</b>, la grille de la semaine, la courbe de batterie, le bilan sur 12 mois, la saison et la météo, la comparaison avec l'essence ou le diesel, le calculateur rapide, les conseils et plusieurs voitures.</li>
+            <li><b class="ui">Avancé</b> : tout. En plus : le tarif horaire, le surplus solaire, la batterie automatique BMW, tout ce qui touche au plan cafétéria (remboursement employeur, coût mensuel complet, km du leasing), la précision de l'appli, le relais d'agenda et la personnalisation de l'affichage.</li>
+            <li>En mode Avancé seulement, la carte <b class="ui">Personnaliser l'affichage</b> permet de masquer bloc par bloc ce qui ne vous sert pas : <b class="ui">Préréglage « Essentiel »</b> masque d'un coup les plus rares, <b class="ui">Tout afficher</b> remet tout. <button type="button" class="btn sec small" data-hgo="blkList">Y aller</button></li>
+            <li>Un outil caché par le mode reste actif : ses réglages comptent toujours dans le plan. Les boutons « Y aller » de l'aide changent de mode pour vous quand il le faut.</li>
+          </ol>
+          <p class="note">Dans la même carte : <b class="ui">Thème</b> (clair, sombre ou automatique), <b class="ui">Taille du texte</b> et <b class="ui">Contraste</b>, pour une lecture plus confortable.</p>
+        </div>
+      </details>
+
+      <details class="acc tuto" id="tu-tarif">
+        <summary>Régler vos tarifs d'électricité<span class="tuMeta">Pour tout le monde · 5 min</span></summary>
+        <div class="accBody">
+          <h3>Compteur jour/nuit (bi-horaire), le cas le plus courant</h3>
+          <ol class="tuSteps">
+            <li>Prenez votre dernière facture ou votre contrat : repérez le prix du kWh « jour » et « nuit », TVA et frais de réseau compris (le prix « tout compris » par kWh).</li>
+            <li><b class="ui">Borne &amp; véhicule</b> &gt; <b class="ui">Tarifs électricité</b> : saisissez <b class="ui">Heures pleines (€/kWh)</b> (jour) et <b class="ui">Heures creuses (€/kWh)</b> (nuit), avec un point ou une virgule, par exemple 0,25. <button type="button" class="btn sec small" data-hgo="tHp">Y aller</button></li>
+            <li>Vérifiez les <b class="ui">Plages d'heures creuses (en semaine)</b> : elles dépendent de votre compteur et de votre gestionnaire de réseau (en Wallonie, ORES ou RESA) et figurent sur la facture. <b class="ui">+ Ajouter une plage</b> si vous en avez deux.</li>
+            <li>Cochez <b class="ui">Week-end entièrement en heures creuses</b> si c'est votre cas (fréquent en bi-horaire).</li>
+          </ol>
+          <h3>Contrat dynamique ou à plusieurs plages (mode Avancé)</h3>
+          <ol class="tuSteps">
+            <li>Dans <b class="ui">Tarifs électricité</b>, touchez <b class="ui">Tarif horaire</b>. <button type="button" class="btn sec small" data-hgo="tmodeChoice">Y aller</button></li>
+            <li>Saisissez un prix par heure, ou collez les 24 prix du jour dans <b class="ui">Coller 24 prix (€/kWh, séparés par un espace, un point-virgule ou un retour à la ligne)</b>, puis <b class="ui">Appliquer les prix collés</b>.</li>
+            <li>Réglez le profil <b class="ui">Week-end</b> de la même façon, ou utilisez <b class="ui">Copier vers l'autre profil</b>.</li>
+          </ol>
+          <h3>Panneaux solaires et remboursement employeur (mode Avancé)</h3>
+          <ol class="tuSteps">
+            <li><b class="ui">Surplus solaire</b> : cochez la case, indiquez les heures d'ensoleillement, le prix de votre électricité solaire (ce que l'injection vous rapporterait) et la part de la recharge couverte par le soleil. <button type="button" class="btn sec small" data-hgo="solOn">Y aller</button></li>
+            <li><b class="ui">Remboursement employeur (plan cafétéria)</b> : cochez <b class="ui">Calculer le remboursement</b> et indiquez le <b class="ui">Tarif de remboursement (€/kWh)</b> fixé par votre employeur. <button type="button" class="btn sec small" data-hgo="refundOn">Y aller</button></li>
+          </ol>
+        </div>
+      </details>
+
+      <details class="acc tuto" id="tu-trips">
+        <summary>Encoder vos trajets et lire le plan<span class="tuMeta">Pour tout le monde · 5 min</span></summary>
+        <div class="accBody">
+          <ol class="tuSteps">
+            <li>Ouvrez <b class="ui">Planning</b> &gt; <b class="ui">Trajets</b> et, en mode Complet, choisissez le <b class="ui">Mode de planification</b> : <b class="ui">Itinéraires</b> (vous décrivez vos trajets, l'appli calcule les recharges) ou <b class="ui">Calendrier de charge</b> (vous réservez simplement des créneaux sur la borne). <button type="button" class="btn sec small" data-hgo="modeChoice">Y aller</button></li>
+            <li>Touchez <b class="ui">＋ Ajouter un itinéraire</b>, choisissez le <b class="ui">Jour</b> et le <b class="ui">Véhicule</b>.</li>
+            <li>Ajoutez les étapes : une adresse favorite (★, à créer dans <b class="ui">Favoris</b>) ou une adresse complète, avec l'heure. Le départ est toujours le domicile.</li>
+            <li>Touchez <b class="ui">Calculer les distances</b> (ou saisissez les km à la main), indiquez en mode Complet si une recharge est possible en route, et, si besoin, le niveau voulu au départ dans <b class="ui">Prêt pour (%)</b>.</li>
+            <li>Touchez <b class="ui">Ajouter l'itinéraire</b>. Un trajet qui revient chaque semaine n'est à encoder qu'une fois.</li>
+            <li>Lisez le résultat dans <b class="ui">Aujourd'hui</b> (ce qu'il faut faire ce soir) et <b class="ui">Semaine</b> (le plan complet, le coût et la courbe de batterie).</li>
+            <li>En mode Complet, pour un trajet exceptionnel, utilisez <b class="ui">Et si… ?</b> : rien n'est enregistré. <button type="button" class="btn sec small" data-hgo="wiKm">Y aller</button></li>
+          </ol>
+          <p class="note">Vos rendez-vous sont dans Google Agenda ? Le tutoriel « Connecter un agenda Google » les transforme en trajets à valider.</p>
+        </div>
+      </details>
+
+      <details class="acc tuto" id="tu-google">
+        <summary>Connecter un agenda Google (relais compris)<span class="tuMeta">Mode Complet (le relais : mode Avancé) · 5 à 15 min</span></summary>
+        <div class="accBody">
+          <p>L'appli lit les rendez-vous de la semaine qui ont un lieu et vous les propose comme trajets. Elle a besoin de l'adresse secrète de votre agenda. Google empêche souvent une page web de lire cette adresse directement : la partie 3 (un petit relais gratuit, à créer une seule fois) règle le problème, la partie 4 est une solution sans relais.</p>
+          <h3>Partie 1 : récupérer l'adresse secrète (sur un ordinateur)</h3>
+          <ol class="tuSteps">
+            <li>Sur un ordinateur, ouvrez calendar.google.com et connectez-vous. L'appli Google Agenda du téléphone n'affiche pas cette adresse ; sur téléphone, ouvrez calendar.google.com dans le navigateur et choisissez la « Version pour ordinateur ».</li>
+            <li>Cliquez sur la roue dentée en haut à droite, puis « Paramètres ».</li>
+            <li>Dans la colonne de gauche, sous « Paramètres de mes agendas », cliquez sur l'agenda qui contient vos rendez-vous.</li>
+            <li>Descendez jusqu'à la section « Intégrer l'agenda » et copiez l'« Adresse secrète au format iCal » (elle se termine par <code>basic.ics</code>).</li>
+          </ol>
+          <p class="warnTxt">Cette adresse donne accès à tout l'agenda : ne la partagez avec personne. En cas de doute, le bouton « Réinitialiser » à côté en crée une nouvelle (l'ancienne cesse de fonctionner).</p>
+          <h3>Partie 2 : l'essayer dans l'appli</h3>
+          <ol class="tuSteps">
+            <li>Ouvrez <b class="ui">Agenda</b> et collez l'adresse dans <b class="ui">Adresse iCal du calendrier</b>. Laissez <b class="ui">Mémoriser cette adresse sur cet appareil</b> coché. <button type="button" class="btn sec small" data-hgo="calUrl">Y aller</button></li>
+            <li>Choisissez le <b class="ui">Véhicule concerné</b> et la <b class="ui">Semaine</b>, puis touchez <b class="ui">Importer les trajets de la semaine</b>.</li>
+            <li>Si ça marche, les rendez-vous apparaissent dans <b class="ui">Trajets à valider</b> : vérifiez-les et validez. Sinon, passez à la partie 3.</li>
+          </ol>
+          <p class="note">L'option <b class="ui">Essayer un proxy public si l'accès direct est bloqué</b> passe par des services publics gratuits, souvent indisponibles et qui voient votre agenda : décochez-la une fois votre relais en place.</p>
+          <h3>Partie 3 : créer votre relais personnel (mode Avancé, gratuit, une seule fois)</h3>
+          <ol class="tuSteps">
+            <li>Créez un compte gratuit sur dash.cloudflare.com (une adresse e-mail et un mot de passe), puis confirmez l'e-mail reçu.</li>
+            <li>Dans le menu de gauche, ouvrez « Workers &amp; Pages » (parfois rangé sous « Compute »), puis « Create » et choisissez « Start with Hello World! ».</li>
+            <li>Donnez un nom, par exemple <code>mon-relais-agenda</code>, puis « Deploy ».</li>
+            <li>Touchez « Edit code ». Effacez tout le code affiché à gauche, collez celui du relais (bouton ci-dessous), puis « Deploy » en haut à droite.
+              <div class="relayBtns"><button type="button" class="btn small" data-relay="agenda" data-ract="copy">Copier le code du relais d'agenda</button><button type="button" class="btn sec small" data-relay="agenda" data-ract="dl">Télécharger relais-agenda.js</button></div>
+              <div class="relayOut" id="relayOut-agenda" hidden></div></li>
+            <li>Copiez l'adresse du Worker, du type <code>https://mon-relais-agenda.votre-nom.workers.dev</code> (affichée sur la page du Worker). Ouvrez-la dans le navigateur : elle doit afficher <code>relais-agenda ok</code>.</li>
+            <li>Dans l'appli, onglet <b class="ui">Agenda</b> : collez-la dans <b class="ui">Mon relais personnel (facultatif)</b>, touchez <b class="ui">Tester le relais</b>, puis <b class="ui">Importer les trajets de la semaine</b>. <button type="button" class="btn sec small" data-hgo="calRelay">Y aller</button></li>
+          </ol>
+          <p class="note">Le relais ne garde rien en mémoire et n'accepte que des agendas connus (Google, Outlook, iCloud, Proton). Seul ce relais, que vous contrôlez, voit votre adresse secrète. L'offre gratuite de Cloudflare suffit largement.</p>
+          <h3>Partie 4 : sans relais, en important un fichier</h3>
+          <ol class="tuSteps">
+            <li>Ouvrez l'adresse secrète dans le navigateur du téléphone : un fichier <code>.ics</code> est téléchargé.</li>
+            <li>Onglet <b class="ui">Agenda</b> &gt; <b class="ui">Importer un fichier .ics</b>, puis choisissez ce fichier. À refaire quand l'agenda change. <button type="button" class="btn sec small" data-hgo="calFileBtn">Y aller</button></li>
+          </ol>
+          <p class="note">Outlook, iCloud et Proton fournissent aussi une adresse iCal (souvent appelée lien de publication « ICS ») : la même procédure s'applique.</p>
+        </div>
+      </details>
+
+      <details class="acc tuto" id="tu-bmw">
+        <summary>Batterie automatique BMW CarData<span class="tuMeta">Mode Avancé · 30 min, une seule fois</span></summary>
+        <div class="accBody">
+          <p>L'appli lit elle-même la batterie (et le compteur km) de votre BMW : le plan se recale tout seul, les recharges terminées vous sont proposées pour le journal et le compteur alimente le suivi du leasing. Il y a trois parties : chez BMW, sur Cloudflare (un petit relais gratuit), puis dans l'appli.</p>
+          <p class="warnTxt">À savoir avant de commencer : BMW ne propose CarData que dans certains pays et pour certains modèles, et ne renvoie les données qu'au conducteur principal de la voiture (celui qui l'a ajoutée dans l'appli My BMW). Cette fonction n'a pas encore pu être essayée avec un vrai compte BMW : si rien ne remonte, l'appli continue de fonctionner comme avant, avec la saisie manuelle. Commencez par la partie A : si BMW ne propose pas CarData pour votre voiture, inutile d'aller plus loin.</p>
+          <p><button type="button" class="btn sec small" data-hgo="advChoice">Passer en mode Avancé</button></p>
+          <h3>Partie A : chez BMW (10 min)</h3>
+          <ol class="tuSteps">
+            <li>Sur le site BMW de votre pays (par exemple bmw.be), connectez-vous à « My BMW » avec le même compte que l'appli My BMW.</li>
+            <li>Ouvrez « Mes véhicules », choisissez votre voiture et cherchez la tuile « BMW CarData ». Si elle n'existe pas, CarData n'est pas proposé pour cette voiture : arrêtez-vous ici.</li>
+            <li>Cliquez sur « Créer un client CarData » (en anglais « Create CarData client »). Copiez l'identifiant client affiché (une suite de lettres et de chiffres séparés par des tirets) : c'est votre <code>CLIENT_ID</code>. Gardez-le pour la partie B.</li>
+            <li>Activez les deux accès « CarData API » et « CarData Stream » : le relais demande les deux. Si le portail affiche une erreur, rechargez la page, ajoutez un accès, attendez environ 30 secondes, puis ajoutez le second.</li>
+          </ol>
+          <h3>Partie B : le relais sur Cloudflare (15 min)</h3>
+          <ol class="tuSteps">
+            <li>Connectez-vous à dash.cloudflare.com (compte gratuit ; celui du relais d'agenda convient).</li>
+            <li>« Workers &amp; Pages » &gt; « Create » &gt; « Start with Hello World! ». Nommez-le, par exemple <code>mon-relais-bmw</code>, puis « Deploy ».</li>
+            <li>« Edit code » : effacez tout, collez le code du relais BMW (bouton ci-dessous), puis « Deploy ».
+              <div class="relayBtns"><button type="button" class="btn small" data-relay="cardata" data-ract="copy">Copier le code du relais BMW</button><button type="button" class="btn sec small" data-relay="cardata" data-ract="dl">Télécharger relais-cardata.js</button></div>
+              <div class="relayOut" id="relayOut-cardata" hidden></div></li>
+            <li>Créez un espace de stockage : menu de gauche « Storage &amp; Databases » &gt; « Workers KV » (ou « KV ») &gt; « Create ». Nom libre, par exemple <code>cardata</code>.</li>
+            <li>Revenez à votre Worker &gt; « Settings » &gt; « Bindings » &gt; « Add » &gt; « KV namespace ». Nom de la variable : exactement <code>CARDATA</code> (en majuscules) ; choisissez l'espace créé juste avant, puis enregistrez (« Deploy » ou « Save »).</li>
+            <li>Toujours dans « Settings », ouvrez « Variables and Secrets » &gt; « Add ». Choisissez le type « Secret », nom <code>CLIENT_ID</code>, valeur : l'identifiant copié en partie A. Enregistrez.</li>
+            <li>Recommencez « Add » pour un second secret nommé <code>RELAY_KEY</code>. Sa valeur est un mot de passe long, que vous collerez aussi dans l'appli : générez-le ici.
+              <div class="relayBtns"><button type="button" class="btn sec small" id="genKey">Générer une clé au hasard</button></div>
+              <div class="genKeyBox" id="genKeyBox" hidden>
+                <div class="field"><label for="genKeyOut">Clé générée (à coller dans Cloudflare comme valeur de RELAY_KEY)</label><input type="text" id="genKeyOut" readonly spellcheck="false" autocomplete="off"></div>
+                <div class="relayBtns"><button type="button" class="btn small" id="genKeyCopy">Copier la clé</button><button type="button" class="btn sec small" id="genKeyUse">L'enregistrer comme « Clé du relais » de l'appli</button></div>
+              </div>
+              <div class="hint" id="genKeyMsg" role="status"></div></li>
+            <li>Conseillé : « Settings » &gt; « Trigger Events » (ou « Triggers ») &gt; « Add » &gt; « Cron Triggers », avec l'expression <code>0 6 * * *</code>. Le relais renouvelle ainsi chaque jour sa connexion à BMW, qui expire sinon après deux semaines sans usage.</li>
+            <li>Copiez l'adresse du Worker (<code>https://mon-relais-bmw.votre-nom.workers.dev</code>). Ouvrez-la dans le navigateur : elle doit afficher <code>relais-cardata ok</code>.</li>
+          </ol>
+          <h3>Partie C : dans l'appli (5 min)</h3>
+          <ol class="tuSteps">
+            <li>Ouvrez <b class="ui">Borne &amp; véhicule</b> &gt; <b class="ui">Batterie automatique (BMW CarData)</b>. Collez l'adresse dans <b class="ui">Adresse de mon relais BMW</b> et la clé dans <b class="ui">Clé du relais</b> (déjà fait si vous avez touché « L'enregistrer » ci-dessus), puis choisissez le <b class="ui">Véhicule concerné</b>. <button type="button" class="btn sec small" data-hgo="carUrl">Y aller</button></li>
+            <li>Touchez <b class="ui">Tester le relais</b>. Attendu : « Relais joignable. Compte BMW non connecté ». Si le message dit « Clé refusée », la clé collée n'est pas exactement celle de <code>RELAY_KEY</code>.</li>
+            <li>Touchez <b class="ui">Connecter mon compte BMW</b> : un code et un lien s'affichent. Ouvrez le lien, saisissez le code, connectez-vous à BMW et autorisez l'accès. Gardez l'appli ouverte : elle détecte l'accord toute seule et affiche « Compte BMW connecté ». Le code est valable quelques minutes.</li>
+            <li>Touchez <b class="ui">Lire la batterie maintenant</b>. Le pourcentage s'affiche, et la carte <b class="ui">Ce soir</b> indique « Lue sur la voiture (BMW) ».</li>
+            <li>Cochez ce que vous voulez automatiser : <b class="ui">Lire la batterie automatiquement à l'ouverture de l'appli</b>, <b class="ui">Recaler le plan sur la batterie réelle</b>, <b class="ui">Détecter les recharges terminées et me les proposer pour le journal</b>. Les recharges détectées apparaissent dans <b class="ui">Recharge détectée</b> : corrigez l'énergie avec la valeur de la borne avant de l'ajouter.</li>
+          </ol>
+          <h3>Si ça coince</h3>
+          <ul class="tuFaq">
+            <li><b>« Relais injoignable »</b> : l'adresse du relais est incorrecte, ou le téléphone n'a pas de connexion.</li>
+            <li><b>« Clé refusée par le relais »</b> : recopiez la clé ; elle doit être identique au secret <code>RELAY_KEY</code>, sans espace.</li>
+            <li><b>« Compte BMW non connecté »</b> : refaites <b class="ui">Connecter mon compte BMW</b>. Sans le déclencheur Cron, la connexion expire après deux semaines sans usage.</li>
+            <li><b>« BMW refuse la liste des véhicules »</b> : CarData n'est pas activé sur ce compte, ou les accès de la partie A manquent.</li>
+            <li><b>« Aucun véhicule principal »</b> : seul le conducteur principal de la voiture reçoit les données.</li>
+            <li><b>« Ni batterie ni compteur »</b> : la voiture ne transmet pas ces données. Dans le portail BMW CarData, créez à la main une sélection de données contenant au moins la batterie affichée : le relais la réutilisera.</li>
+            <li><b>« Quota BMW »</b> : BMW limite à 50 lectures par jour. L'appli lit au plus toutes les 10 minutes ; réessayez le lendemain.</li>
+          </ul>
+          <p class="note">Votre clé reste sur ce téléphone : elle n'entre dans une sauvegarde que si vous cochez <b class="ui">Inclure les adresses et clés secrètes (adresse iCal, clé du relais BMW)</b>. La batterie lue peut dater de quelques minutes ou heures : la voiture n'envoie ses données que quand elle le décide (l'ancienneté est affichée).</p>
+        </div>
+      </details>
+
+      <details class="acc tuto" id="tu-log">
+        <summary>Noter vos recharges et suivre le budget<span class="tuMeta">Pour tout le monde · 2 min par recharge</span></summary>
+        <div class="accBody">
+          <ol class="tuSteps">
+            <li>Après une recharge à domicile, ouvrez <b class="ui">Suivi</b> &gt; <b class="ui">Ajouter une recharge</b>. <button type="button" class="btn sec small" data-hgo="lgKwh">Y aller</button></li>
+            <li>Indiquez la date et l'<b class="ui">Énergie (kWh)</b> affichée par la borne ou le compteur (c'est le seul champ obligatoire). En mode Complet, si vous les connaissez, ajoutez <b class="ui">Batterie avant (%)</b>, <b class="ui">Batterie après (%)</b> et les km depuis la recharge précédente : l'appli s'en sert pour mesurer votre consommation réelle.</li>
+            <li>Touchez <b class="ui">Enregistrer la recharge</b>. <b class="ui">Reprendre le plan</b> préremplit l'énergie prévue par le planning.</li>
+            <li><b class="ui">Relevé du mois</b> fait le total du mois ; en mode Complet, <b class="ui">Exporter le relevé (CSV)</b> et <b class="ui">Imprimer / PDF</b> préparent un document à envoyer (par exemple à votre employeur).</li>
+            <li>Mode Complet : <b class="ui">Bilan sur 12 mois</b> montre l'évolution mois par mois.</li>
+            <li>Mode Avancé : <b class="ui">Précision de l'appli</b> propose, après quelques recharges complètes, de corriger le rendement et la consommation. Rien n'est modifié sans votre accord.</li>
+          </ol>
+        </div>
+      </details>
+
+      <details class="acc tuto" id="tu-cafe">
+        <summary>Plan cafétéria : remboursement, coût complet, km du leasing<span class="tuMeta">Mode Avancé · 5 min</span></summary>
+        <div class="accBody">
+          <ol class="tuSteps">
+            <li>Passez en mode Avancé. <button type="button" class="btn sec small" data-hgo="advChoice">Y aller</button></li>
+            <li>Remboursement de la recharge à domicile : <b class="ui">Borne &amp; véhicule</b> &gt; <b class="ui">Tarifs électricité</b> &gt; <b class="ui">Calculer le remboursement</b>, puis le <b class="ui">Tarif de remboursement (€/kWh)</b> appliqué par votre employeur. <button type="button" class="btn sec small" data-hgo="refundOn">Y aller</button></li>
+            <li>Coût réel du mois : <b class="ui">Suivi</b> &gt; <b class="ui">Coût mensuel complet</b>, indiquez la <b class="ui">Participation mensuelle au plan (€/mois)</b> telle que vous la suivez (brut ou net). L'appli ajoute l'électricité notée dans le journal et retire le remboursement. <button type="button" class="btn sec small" data-hgo="fipPart">Y aller</button></li>
+            <li>Kilométrage du leasing : <b class="ui">Suivi</b> &gt; <b class="ui">Suivi des km du leasing</b>, cochez <b class="ui">Suivre le kilométrage de mon leasing</b>, puis renseignez <b class="ui">Forfait (km par an)</b>, <b class="ui">Durée du contrat (mois)</b>, <b class="ui">Début du contrat</b>, <b class="ui">Compteur au départ (km)</b> et, si vous le connaissez, <b class="ui">Prix du km en trop (€/km), facultatif</b>. <button type="button" class="btn sec small" data-hgo="leaseOn">Y aller</button></li>
+            <li>Notez le compteur de temps en temps avec <b class="ui">Ajouter le relevé</b> (ou laissez la batterie automatique BMW le faire). L'appli compare votre rythme au forfait et projette le total en fin de contrat.</li>
+          </ol>
+          <p class="note">Ce sont des ordres de grandeur : l'appli ne calcule ni impôt ni cotisation, et les conditions exactes (tolérance, km non utilisés) sont celles de votre contrat.</p>
+        </div>
+      </details>
+
+      <details class="acc tuto" id="tu-share">
+        <summary>Partager la borne avec le foyer<span class="tuMeta">Mode Complet · plusieurs voitures électriques · 3 min</span></summary>
+        <div class="accBody">
+          <ol class="tuSteps">
+            <li>Chaque membre du foyer installe l'appli sur son téléphone et y encode sa voiture et ses trajets.</li>
+            <li>Dans <b class="ui">Foyer</b>, indiquez <b class="ui">Votre prénom (affiché chez l'autre membre)</b>. <button type="button" class="btn sec small" data-hgo="meName">Y aller</button></li>
+            <li>Envoyez votre calendrier : <b class="ui">Partager…</b> (messagerie, e-mail), <b class="ui">Copier le code</b> ou <b class="ui">Afficher en QR code</b>.</li>
+            <li>L'autre membre colle le code dans <b class="ui">Collez le code reçu</b> puis touche <b class="ui">Importer le code</b>. Ses plans évitent alors vos créneaux, et inversement.</li>
+            <li>Renvoyez un nouveau code après chaque changement de planning.</li>
+          </ol>
+          <p class="note">Sont envoyés : votre prénom, le nom, la couleur et la puissance des véhicules, et les jours et heures de charge. Jamais vos adresses, trajets, agenda ou tarifs.</p>
+        </div>
+      </details>
+
+      <details class="acc tuto" id="tu-ics">
+        <summary>Recevoir les rappels dans votre agenda<span class="tuMeta">Mode Complet · 2 min</span></summary>
+        <div class="accBody">
+          <ol class="tuSteps">
+            <li><b class="ui">Planning</b> &gt; <b class="ui">Semaine</b> &gt; <b class="ui">Rappels dans mon agenda</b>. <button type="button" class="btn sec small" data-hgo="icsWeeks">Y aller</button></li>
+            <li>Choisissez la <b class="ui">Période</b>, le <b class="ui">Rappel « Brancher la voiture »</b> et, si vous le voulez, le <b class="ui">Rappel « Préchauffer la voiture »</b> et le rappel du soir pour noter la batterie.</li>
+            <li>Touchez <b class="ui">Télécharger le fichier agenda (.ics)</b>, puis ouvrez le fichier sur le téléphone : votre agenda propose d'ajouter les événements avec leur alarme.</li>
+            <li>Si le planning change, refaites l'export : la plupart des agendas mettent à jour les événements au lieu de les dupliquer.</li>
+          </ol>
+        </div>
+      </details>
+
+      <details class="acc tuto" id="tu-backup">
+        <summary>Sauvegarder, restaurer, changer de téléphone<span class="tuMeta">Pour tout le monde · 2 min</span></summary>
+        <div class="accBody">
+          <ol class="tuSteps">
+            <li>Vos données ne sont que sur ce téléphone. Une fois par mois environ : <b class="ui">Aide</b> &gt; <b class="ui">Réglages</b> &gt; <b class="ui">Sauvegarde des données</b> &gt; <b class="ui">Exporter mes données</b>. <button type="button" class="btn sec small" data-hgo="dataExport">Y aller</button></li>
+            <li>Rangez le fichier <code>.json</code> obtenu en lieu sûr (Google Drive, e-mail à vous-même…).</li>
+            <li>La case <b class="ui">Inclure les adresses et clés secrètes (adresse iCal, clé du relais BMW)</b> les ajoute au fichier : ne la cochez que si le fichier reste privé.</li>
+            <li>Nouveau téléphone : installez l'appli, puis <b class="ui">Importer une sauvegarde</b> et choisissez le fichier. L'import remplace toutes les données présentes.</li>
+          </ol>
+          <p class="note">L'appli vous rappelle de sauvegarder quand la dernière sauvegarde est ancienne.</p>
+        </div>
+      </details>
+
+      <details class="acc tuto" id="tu-update">
+        <summary>Mettre l'appli à jour<span class="tuMeta">Pour tout le monde · 1 min</span></summary>
+        <div class="accBody">
+          <ol class="tuSteps">
+            <li><b class="ui">Aide</b> &gt; <b class="ui">Réglages</b> &gt; <b class="ui">Version et mises à jour</b> &gt; <b class="ui">Vérifier les mises à jour</b>. <button type="button" class="btn sec small" data-hgo="updBtn">Y aller</button></li>
+            <li>Si une version plus récente existe, touchez <b class="ui">Recharger maintenant</b>. Vos données ne sont pas touchées.</li>
+            <li>Si vous utilisez un fichier .html, remplacez-le par la nouvelle version au même endroit.</li>
+          </ol>
+        </div>
+      </details>
+
+      <details class="acc tuto" id="tu-faq">
+        <summary>Problèmes fréquents<span class="tuMeta">Questions et réponses</span></summary>
+        <div class="accBody">
+          <ul class="tuFaq">
+            <li><b>Le plan ne prévoit aucune recharge.</b> La batterie prévue en rentrant reste au-dessus du <b class="ui">Seuil de recharge (%)</b>, ou aucun trajet n'est encodé pour ce véhicule. Vérifiez aussi la batterie notée dans <b class="ui">Ce soir</b>.</li>
+            <li><b>Les distances ne se calculent pas.</b> Vérifiez l'adresse du domicile (<b class="ui">Vérifier l'adresse</b>) et la connexion. Vous pouvez toujours saisir les km à la main.</li>
+            <li><b>Un bloc ou un onglet a disparu.</b> Il est masqué dans <b class="ui">Personnaliser l'affichage</b> : touchez <b class="ui">Tout afficher</b>. <button type="button" class="btn sec small" data-hgo="blkList">Y aller</button></li>
+            <li><b>Un réglage décrit ici n'apparaît pas.</b> Il fait partie d'un mode plus complet : <button type="button" class="btn sec small" data-hgo="advChoice">Choisir le mode</button> (les boutons « Y aller » changent de mode tout seuls).</li>
+            <li><b>L'agenda ne se synchronise pas.</b> Google bloque souvent la lecture directe : suivez le tutoriel « Connecter un agenda Google », partie 3 ou 4.</li>
+            <li><b>Mes données ont disparu.</b> Le navigateur les a effacées (nettoyage, autre navigateur, autre téléphone) : <b class="ui">Importer une sauvegarde</b>. Sur iPhone, les données de l'icône installée et celles de Safari sont séparées.</li>
+            <li><b>Toujours bloqué ?</b> <button type="button" class="btn sec small" data-gohv="contact">Écrivez-moi</button></li>
+          </ul>
+        </div>
+      </details>
+
+      </div>
+    </div>
+    </div>
+
+    <!-- rubrique 3 : formulaire de contact -->
+    <div class="hv" id="hv-contact" role="tabpanel" aria-labelledby="hvt-contact" hidden>
+   <div class="cols"><div class="col">
+    <div class="card" id="contactCard">
+      <h2>Me contacter</h2>
+      <p class="note">Une question, un problème, une idée d'amélioration ? Écrivez-moi ici : je vous réponds par e-mail. Avant d'écrire, les <button type="button" class="linkBtn" data-htu="tu-faq">problèmes fréquents</button> ont peut-être déjà la réponse.</p>
+      <form id="ctForm" novalidate>
+        <div class="field"><label for="ctName">Votre prénom ou nom (facultatif)</label><input type="text" id="ctName" maxlength="60" autocomplete="name"></div>
+        <div class="field"><label for="ctMail">Votre adresse e-mail, pour la réponse</label><input type="email" id="ctMail" maxlength="120" autocomplete="email" inputmode="email" required aria-describedby="ctMailN" spellcheck="false"><div class="note" id="ctMailN">Elle ne sert qu'à vous répondre.</div></div>
+        <div class="field"><label for="ctTopic">Sujet</label>
+          <select id="ctTopic"><option value="Question">Question</option><option value="Problème">Problème ou bug</option><option value="Suggestion">Suggestion</option><option value="Autre">Autre</option></select></div>
+        <div class="field"><label for="ctMsgIn">Votre message</label><textarea id="ctMsgIn" rows="6" maxlength="3000" required aria-describedby="ctCount"></textarea><div class="note" id="ctCount">0 / 3000 caractères (10 au minimum)</div></div>
+        <div class="checkRow"><input type="checkbox" id="ctDiag"><label for="ctDiag">Joindre des informations techniques (version, téléphone, fonctions activées) pour m'aider à résoudre un problème</label></div>
+        <details class="ctDiagBox"><summary>Voir ce qui sera joint</summary><pre id="ctDiagTxt"></pre><p class="note">Ni adresse, ni trajet, ni agenda, ni clé, ni donnée de recharge.</p></details>
+        <input type="checkbox" name="botcheck" id="ctBot" tabindex="-1" style="display:none" aria-hidden="true" aria-label="Ne pas cocher">
+        <div class="row" style="margin-top:12px"><button type="submit" class="btn" id="ctSend">Envoyer le message</button></div>
+        <div class="hint" id="ctOut" role="status" aria-live="polite"></div>
+      </form>
+      <p class="note" style="margin-top:10px">Confidentialité : votre message, votre nom et votre adresse e-mail sont transmis par Web3Forms (un service d'envoi de formulaires), puis arrivent dans ma boîte e-mail. Rien d'autre n'est envoyé, sauf les informations techniques si vous cochez la case. Si l'envoi échoue, votre message reste ici, sur ce téléphone, jusqu'au prochain essai.</p>
+    </div>
+   </div></div>
+    </div>
+  </section>
   <div class="advOnly blkLink"><button type="button" class="btn sec small" id="blkGo"><span aria-hidden="true">⚙</span> Personnaliser l'affichage</button></div>
 </main>
 
 <nav class="tabs" id="tabsNav" aria-label="Navigation principale">
   <button type="button" data-tab="plan" class="on" aria-current="page"><span class="ico" aria-hidden="true">📅</span>Planning</button>
-  <button type="button" data-tab="cal" data-blk="tab.cal"><span class="ico" aria-hidden="true">🗓️</span>Agenda</button>
+  <button type="button" data-tab="cal" data-blk="tab.cal" class="fullOnly"><span class="ico" aria-hidden="true">🗓️</span>Agenda</button>
   <button type="button" data-tab="veh"><span class="ico" aria-hidden="true">🔌</span>Borne &amp; véhicule</button>
   <button type="button" data-tab="log" data-blk="tab.log"><span class="ico" aria-hidden="true">📊</span>Suivi</button>
-  <button type="button" data-tab="share" data-blk="tab.share"><span class="ico" aria-hidden="true">👪</span>Foyer</button>
+  <button type="button" data-tab="share" data-blk="tab.share" class="fullOnly"><span class="ico" aria-hidden="true">👪</span>Foyer</button>
   <button type="button" data-tab="fav" data-blk="tab.fav"><span class="ico" aria-hidden="true">★</span>Favoris</button>
+  <button type="button" data-tab="help"><span class="ico" aria-hidden="true">❓</span>Aide</button>
 </nav>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -1240,6 +1648,462 @@ body.simple .advOnly{display:none!important}
 
 <div id="printSheet" aria-hidden="true"></div>
 
+<script type="text/plain" id="src-relais-agenda">
+/* =====================================================================
+   RELAIS D'AGENDA : script à déployer sur Cloudflare Workers (gratuit)
+
+   Rôle : les navigateurs n'ont pas le droit de lire directement l'adresse
+   iCal secrète de Google Agenda. Ce petit relais, que VOUS contrôlez, lit
+   l'agenda à la place du navigateur et le lui renvoie. Il ne garde rien en
+   mémoire et n'accepte que des adresses d'agendas connus (liste ci-dessous).
+
+   Utilisation : voir le fichier LISEZMOI.txt. Après déploiement, collez
+   l'adresse du relais (https://….workers.dev) dans l'appli, onglet « Agenda »,
+   champ « Mon relais personnel ».
+   ===================================================================== */
+
+/* Sites d'agenda autorisés (un nom exact, ou un nom précédé d'un point pour inclure tous ses sous-domaines) */
+const SITES_AUTORISES = [
+  'calendar.google.com',
+  'outlook.office365.com',
+  'outlook.live.com',
+  '.icloud.com',
+  'calendar.proton.me',
+];
+
+/* Facultatif : adresses des sites autorisés à utiliser ce relais, par exemple
+   ['https://mon-site.netlify.app']. Laissez vide pour autoriser tous les sites. */
+const SITES_QUI_PEUVENT_UTILISER_LE_RELAIS = [];
+
+const TAILLE_MAX = 5 * 1024 * 1024; // 5 Mo
+
+function siteAutorise(hote) {
+  return SITES_AUTORISES.some((s) => (s.startsWith('.') ? hote.endsWith(s) : hote === s));
+}
+
+export default {
+  async fetch(request) {
+    const origine = request.headers.get('Origin') || '';
+    const restreint = SITES_QUI_PEUVENT_UTILISER_LE_RELAIS.length > 0;
+    const cors = {
+      'Access-Control-Allow-Origin': restreint ? (SITES_QUI_PEUVENT_UTILISER_LE_RELAIS.includes(origine) ? origine : 'null') : '*',
+      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Access-Control-Allow-Headers': '*',
+      'Access-Control-Max-Age': '86400',
+      'Vary': 'Origin',
+    };
+    const reponse = (corps, statut, type) =>
+      new Response(corps, { status: statut, headers: { ...cors, 'Content-Type': type || 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' } });
+
+    if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
+    if (request.method !== 'GET') return reponse('méthode non autorisée', 405);
+    if (restreint && !SITES_QUI_PEUVENT_UTILISER_LE_RELAIS.includes(origine)) return reponse('site non autorisé', 403);
+
+    const params = new URL(request.url).searchParams;
+    const cible = params.get('url');
+    if (!cible) return reponse('relais-agenda ok'); // test de fonctionnement (bouton « Tester le relais »)
+
+    let adresse;
+    try {
+      adresse = new URL(cible.trim().replace(/^webcals?:\/\//i, 'https://'));
+    } catch (e) {
+      return reponse('adresse non valide', 400);
+    }
+    if (adresse.protocol !== 'https:' || adresse.username || adresse.password) return reponse('seules les adresses https:// sont acceptées', 400);
+    if (!siteAutorise(adresse.hostname)) return reponse('ce site d\'agenda n\'est pas dans la liste autorisée du relais (' + adresse.hostname + ')', 403);
+
+    let source;
+    try {
+      source = await fetch(adresse.toString(), { headers: { Accept: 'text/calendar, */*;q=0.5' }, redirect: 'follow' });
+    } catch (e) {
+      return reponse('l\'agenda est injoignable', 502);
+    }
+    if (!source.ok) return reponse('l\'agenda a répondu par une erreur (' + source.status + ')', 502);
+    const taille = Number(source.headers.get('Content-Length') || 0);
+    if (taille > TAILLE_MAX) return reponse('agenda trop volumineux', 413);
+    const texte = await source.text();
+    if (texte.length > TAILLE_MAX) return reponse('agenda trop volumineux', 413);
+    if (!texte.includes('BEGIN:VCALENDAR')) return reponse('cette adresse ne renvoie pas un calendrier iCal', 502);
+    return reponse(texte, 200, 'text/calendar; charset=utf-8');
+  },
+};
+</script>
+<script type="text/plain" id="src-relais-cardata">
+/* =====================================================================
+   RELAIS BMW CARDATA : script à déployer sur Cloudflare Workers (gratuit)
+
+   Rôle : lire la batterie (et le compteur) de votre voiture via l'API
+   officielle « BMW CarData », avec VOTRE accord, et la renvoyer à l'appli.
+   Un navigateur n'a pas le droit d'appeler BMW directement ; ce petit relais,
+   que VOUS contrôlez, garde la connexion à votre compte BMW (jetons stockés
+   dans votre espace Cloudflare, jamais dans l'appli) et ne répond qu'à
+   quelqu'un qui connaît la clé RELAY_KEY.
+
+   Mise en place complète : voir le fichier LISEZMOI.txt (section BMW CarData).
+   Réglages à créer dans Cloudflare :
+     - un espace KV lié au script sous le nom   CARDATA
+     - un secret   CLIENT_ID   (l'identifiant client créé sur le portail BMW CarData)
+     - un secret   RELAY_KEY   (un mot de passe long de votre choix : à coller aussi dans l'appli)
+     - facultatif : un déclencheur Cron « 0 6 * * * » (renouvelle la connexion chaque jour)
+     - facultatif : une variable   VIN   (si votre compte compte plusieurs véhicules)
+
+   Limites connues : cette fonction n'a pas pu être essayée avec un vrai compte
+   BMW par l'auteur de l'appli (seulement avec une simulation). BMW limite à
+   50 lectures par jour : le relais en garde une marge et mémorise la dernière
+   réponse quelques minutes.
+   ===================================================================== */
+
+const AUTH_BMW = 'https://customer.bmwgroup.com/gcdm/oauth';
+const API_BMW = 'https://api-cardata.bmwgroup.com';
+const PORTEE = 'authenticate_user openid cardata:api:read cardata:streaming:read';
+
+/* données demandées à la voiture (jeux de repli si BMW refuse un identifiant inconnu pour ce modèle) */
+const CLE_SOC = 'vehicle.powertrain.electric.battery.stateOfCharge.displayed';
+const CLE_CIBLE = 'vehicle.powertrain.electric.battery.stateOfCharge.target';
+const CLE_ETAT = 'vehicle.drivetrain.electricEngine.charging.status';
+const CLE_COMPTEUR = 'vehicle.vehicle.travelledDistance';
+const CLE_AUTONOMIE = 'vehicle.drivetrain.electricEngine.kombiRemainingElectricRange';
+const JEUX = [
+  [CLE_SOC, CLE_CIBLE, CLE_ETAT, CLE_COMPTEUR, CLE_AUTONOMIE, 'vehicle.body.chargingPort.status'],
+  [CLE_SOC, CLE_ETAT, CLE_COMPTEUR, CLE_AUTONOMIE],
+  [CLE_SOC, CLE_COMPTEUR],
+  [CLE_SOC],
+];
+
+const MEMOIRE_S = 300;          // une réponse récente est resservie pendant 5 minutes
+const MIN_ENTRE_LECTURES_S = 60; // même avec « fresh », jamais plus d'une lecture BMW par minute
+const MAX_PAR_JOUR = 45;         // BMW coupe à 50 : on garde de la marge pour la mise en place
+
+const entetesCors = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'x-relay-key, content-type',
+  'Access-Control-Max-Age': '86400',
+};
+const json = (corps, statut = 200) =>
+  new Response(JSON.stringify(corps), {
+    status: statut,
+    headers: { ...entetesCors, 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' },
+  });
+const erreur = (message, statut = 400) => json({ ok: false, error: message }, statut);
+
+/* comparaison de la clé sans fuite de temps */
+function memeTexte(a, b) {
+  const x = new TextEncoder().encode(String(a));
+  const y = new TextEncoder().encode(String(b));
+  let d = x.length ^ y.length;
+  for (let i = 0; i < Math.max(x.length, y.length); i++) d |= (x[i] || 0) ^ (y[i] || 0);
+  return d === 0;
+}
+
+function base64url(octets) {
+  let s = '';
+  for (const o of octets) s += String.fromCharCode(o);
+  return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+async function pkce() {
+  const hasard = crypto.getRandomValues(new Uint8Array(48));
+  const verifier = base64url(hasard);
+  const empreinte = new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier)));
+  return { verifier, challenge: base64url(empreinte) };
+}
+
+const lire = async (env, cle) => {
+  const t = await env.CARDATA.get(cle);
+  if (!t) return null;
+  try { return JSON.parse(t); } catch (e) { return null; }
+};
+const ecrire = (env, cle, valeur, ttl) =>
+  env.CARDATA.put(cle, JSON.stringify(valeur), ttl ? { expirationTtl: Math.max(60, Math.ceil(ttl)) } : undefined);
+
+async function postForm(url, champs) {
+  const r = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json' },
+    body: new URLSearchParams(champs).toString(),
+    signal: AbortSignal.timeout(15000),
+  });
+  let j = null;
+  try { j = await r.json(); } catch (e) { /* corps vide */ }
+  return { statut: r.status, ok: r.ok, j: j || {} };
+}
+
+/* jetons : on en garde toujours un valable ; renouvellement automatique avec le jeton de rafraîchissement */
+async function jetonValable(env, forcer) {
+  const t = await lire(env, 'tokens');
+  if (!t || !t.refresh || (t.refreshExp && Date.now() > t.refreshExp)) return null;
+  if (!forcer && t.access && Date.now() < t.exp - 60000) return t.access;
+  const r = await postForm(`${AUTH_BMW}/token`, {
+    client_id: env.CLIENT_ID,
+    grant_type: 'refresh_token',
+    refresh_token: t.refresh,
+  });
+  if (!r.ok || !r.j.access_token) {
+    /* une autre requête (autre appareil, déclencheur Cron) a peut-être renouvelé les jetons au même moment :
+       BMW n'accepte alors plus l'ancien jeton de rafraîchissement. On reprend les nouveaux avant de conclure. */
+    const autre = await lire(env, 'tokens');
+    if (autre && autre.refresh && autre.refresh !== t.refresh && autre.access && Date.now() < autre.exp - 60000) return autre.access;
+    if (r.statut === 400 || r.statut === 401) await env.CARDATA.delete('tokens'); // connexion perdue : il faudra se reconnecter
+    return null;
+  }
+  await memoriserJetons(env, r.j, t);
+  return r.j.access_token;
+}
+async function memoriserJetons(env, j, ancien) {
+  const maintenant = Date.now();
+  await ecrire(env, 'tokens', {
+    access: j.access_token,
+    refresh: j.refresh_token || (ancien && ancien.refresh) || '',
+    exp: maintenant + (Number(j.expires_in) || 3600) * 1000,
+    refreshExp: maintenant + 14 * 24 * 3600 * 1000 - 3600 * 1000, // BMW : 2 semaines
+    gcid: j.gcid || (ancien && ancien.gcid) || '',
+  });
+}
+
+/* quota BMW : compteur du jour (UTC) */
+const cleQuota = () => 'quota:' + new Date().toISOString().slice(0, 10);
+async function quotaRestant(env) {
+  const n = Number(await env.CARDATA.get(cleQuota())) || 0;
+  return Math.max(0, MAX_PAR_JOUR - n);
+}
+async function compterAppel(env) {
+  const n = (Number(await env.CARDATA.get(cleQuota())) || 0) + 1;
+  await env.CARDATA.put(cleQuota(), String(n), { expirationTtl: 2 * 24 * 3600 });
+}
+
+async function apiBmw(env, jeton, chemin, options = {}) {
+  await compterAppel(env);
+  const r = await fetch(API_BMW + chemin, {
+    method: options.method || 'GET',
+    headers: {
+      Authorization: 'Bearer ' + jeton,
+      'x-version': 'v1',
+      Accept: 'application/json',
+      ...(options.body ? { 'Content-Type': 'application/json' } : {}),
+    },
+    body: options.body ? JSON.stringify(options.body) : undefined,
+    signal: AbortSignal.timeout(15000),
+  });
+  let j = null;
+  try { j = await r.json(); } catch (e) { /* corps vide */ }
+  return { statut: r.status, ok: r.ok, j: j || {} };
+}
+
+/* véhicule : variable VIN, sinon le véhicule principal du compte */
+async function trouverVin(env, jeton) {
+  if (env.VIN) return String(env.VIN).trim();
+  const memo = await lire(env, 'vin');
+  if (memo && memo.vin) return memo.vin;
+  const r = await apiBmw(env, jeton, '/customers/vehicles/mappings');
+  if (!r.ok) throw new Erreur(`BMW refuse la liste des véhicules (HTTP ${r.statut}). Le compte est-il bien abonné à CarData ?`, 502);
+  const liste = Array.isArray(r.j) ? r.j : Array.isArray(r.j.mappings) ? r.j.mappings : [];
+  const choisi = liste.find((v) => v && v.vin && String(v.mappingType || '').toUpperCase() === 'PRIMARY') || liste.find((v) => v && v.vin);
+  if (!choisi) throw new Erreur('Aucun véhicule principal trouvé sur ce compte BMW (CarData ne renvoie que le conducteur principal).', 404);
+  await ecrire(env, 'vin', { vin: choisi.vin });
+  return choisi.vin;
+}
+
+/* conteneur : la « liste de courses » de données autorisée, créée une fois puis réutilisée */
+async function trouverConteneur(env, jeton, renouveler) {
+  if (!renouveler) {
+    const memo = await lire(env, 'container');
+    if (memo && memo.id) return memo.id;
+  }
+  /* un conteneur adapté existe déjà (créé par le relais ou à la main sur le portail BMW) : on le réutilise */
+  const liste = await apiBmw(env, jeton, '/customers/containers');
+  if (liste.ok) {
+    const tous = Array.isArray(liste.j) ? liste.j : Array.isArray(liste.j.containers) ? liste.j.containers : [];
+    const bon = tous.find((c) => c && (c.containerId || c.id) && String(c.state || 'ACTIVE').toUpperCase() !== 'DELETED'
+      && (c.name === 'planificateur-recharge' || JSON.stringify(c.technicalDescriptors || c.descriptors || []).includes(CLE_SOC)));
+    if (bon) {
+      const id = bon.containerId || bon.id;
+      await ecrire(env, 'container', { id, jeu: -1 });
+      return id;
+    }
+  }
+  for (let i = 0; i < JEUX.length; i++) {
+    const r = await apiBmw(env, jeton, '/customers/containers', {
+      method: 'POST',
+      body: { name: 'planificateur-recharge', purpose: 'Batterie et compteur pour planifier la recharge', technicalDescriptors: JEUX[i] },
+    });
+    const id = r.j && (r.j.containerId || r.j.id);
+    if (r.ok && id) {
+      await ecrire(env, 'container', { id, jeu: i });
+      return id;
+    }
+    if (r.statut === 401 || r.statut === 403 || r.statut === 429) throw new Erreur(`BMW refuse la création du conteneur (HTTP ${r.statut}).`, r.statut === 429 ? 429 : 502);
+    /* autre refus (identifiant inconnu pour ce modèle ?) : on essaie le jeu suivant, plus court */
+  }
+  throw new Erreur('BMW a refusé tous les jeux de données (aucun identifiant accepté pour ce véhicule).', 502);
+}
+
+class Erreur extends Error {
+  constructor(message, statut) { super(message); this.statut = statut || 500; }
+}
+
+const nombre = (v) => {
+  const n = parseFloat(String(v == null ? '' : v).replace(',', '.'));
+  return Number.isFinite(n) ? n : null;
+};
+const enKm = (d) => {
+  const n = d && nombre(d.value);
+  if (n == null) return null;
+  return /mi/i.test(String(d.unit || '')) ? n * 1.609344 : n;
+};
+function etatCharge(d) {
+  if (!d || d.value == null) return null;
+  const v = String(d.value).toUpperCase().replace(/[^A-Z]/g, '');
+  if (!v) return null;
+  if (/NOCHARG|NOTCHARG|CHARGINGENDED|ENDED|FINISHED|COMPLETE|ERROR|FAULT|PAUSED|INACTIVE|IDLE|WAITING|DISCONNECT/.test(v)) return false;
+  if (/CHARGINGACTIVE|^CHARGING$|ACTIVE|INPROGRESS|RUNNING/.test(v)) return true;
+  return null;
+}
+function normaliser(donnees) {
+  const T = donnees || {};
+  const soc = T[CLE_SOC] ? nombre(T[CLE_SOC].value) : null;
+  const cible = T[CLE_CIBLE] ? nombre(T[CLE_CIBLE].value) : null;
+  const odo = enKm(T[CLE_COMPTEUR]);
+  const autonomie = enKm(T[CLE_AUTONOMIE]);
+  const instants = [CLE_SOC, CLE_COMPTEUR, CLE_ETAT]
+    .map((k) => (T[k] && T[k].timestamp ? Date.parse(T[k].timestamp) : NaN))
+    .filter((x) => Number.isFinite(x));
+  return {
+    soc: soc != null && soc >= 0 && soc <= 100 ? soc : null,
+    target: cible != null && cible >= 0 && cible <= 100 ? cible : null,
+    chg: etatCharge(T[CLE_ETAT]),
+    odo: odo != null && odo >= 0 ? Math.round(odo) : null,
+    range: autonomie != null && autonomie >= 0 ? Math.round(autonomie) : null,
+    ts: instants.length ? Math.max(...instants) : null,
+  };
+}
+
+async function lireVoiture(env, fresh) {
+  const maintenant = Date.now();
+  const memo = await lire(env, 'data');
+  if (memo && memo.payload) {
+    const age = (maintenant - memo.at) / 1000;
+    if (age < (fresh ? MIN_ENTRE_LECTURES_S : MEMOIRE_S)) {
+      return json({ ok: true, ...memo.payload, cached: true, quotaLeft: await quotaRestant(env) });
+    }
+  }
+  if ((await quotaRestant(env)) < 2) {
+    if (memo && memo.payload) return json({ ok: true, ...memo.payload, cached: true, stale: true, quotaLeft: 0 });
+    return erreur('Quota BMW du jour atteint (50 lectures). Réessayez demain.', 429);
+  }
+  let jeton = await jetonValable(env, false);
+  if (!jeton) return erreur('Compte BMW non connecté (ou connexion expirée) : utilisez « Connecter mon compte BMW » dans l\'appli.', 401);
+  const vin = await trouverVin(env, jeton);
+  let conteneur = await trouverConteneur(env, jeton, false);
+  const appeler = () => apiBmw(env, jeton, `/customers/vehicles/${encodeURIComponent(vin)}/telematicData?containerId=${encodeURIComponent(conteneur)}`);
+  let r = await appeler();
+  if (r.statut === 401) { // jeton refusé malgré sa date : on le renouvelle une fois
+    jeton = await jetonValable(env, true);
+    if (!jeton) return erreur('Connexion BMW perdue : reconnectez votre compte dans l\'appli.', 401);
+    r = await appeler();
+  }
+  if (r.statut === 404 || (r.statut === 400 && /container/i.test(JSON.stringify(r.j)))) { // conteneur disparu : on le recrée une fois
+    conteneur = await trouverConteneur(env, jeton, true);
+    r = await appeler();
+  }
+  if (r.statut === 429) return erreur('BMW limite le nombre de lectures (quota atteint). Réessayez plus tard.', 429);
+  if (!r.ok) return erreur(`BMW n'a pas renvoyé les données (HTTP ${r.statut}).`, 502);
+  const payload = normaliser(r.j.telematicData);
+  payload.vin = '…' + String(vin).slice(-4);
+  await ecrire(env, 'data', { at: maintenant, payload }, 3600);
+  return json({ ok: true, ...payload, cached: false, quotaLeft: await quotaRestant(env) });
+}
+
+async function demarrerConnexion(env) {
+  if (!env.CLIENT_ID) return erreur('CLIENT_ID manquant dans les réglages du relais.', 503);
+  const { verifier, challenge } = await pkce();
+  const r = await postForm(`${AUTH_BMW}/device/code`, {
+    client_id: env.CLIENT_ID,
+    response_type: 'device_code',
+    scope: PORTEE,
+    code_challenge: challenge,
+    code_challenge_method: 'S256',
+  });
+  if (!r.ok || !r.j.device_code) return erreur(`BMW refuse la demande de connexion (HTTP ${r.statut}) : vérifiez CLIENT_ID.`, 502);
+  await ecrire(env, 'pending', { device_code: r.j.device_code, verifier }, Number(r.j.expires_in) || 600);
+  return json({
+    ok: true,
+    user_code: r.j.user_code,
+    verification_uri: r.j.verification_uri,
+    verification_uri_complete: r.j.verification_uri_complete || null,
+    expires_in: Number(r.j.expires_in) || 600,
+    interval: Number(r.j.interval) || 5,
+  });
+}
+async function sonderConnexion(env) {
+  const p = await lire(env, 'pending');
+  if (!p) return erreur('Aucune connexion en cours (le code a peut-être expiré). Relancez la connexion.', 400);
+  const r = await postForm(`${AUTH_BMW}/token`, {
+    client_id: env.CLIENT_ID,
+    device_code: p.device_code,
+    grant_type: 'urn:ietf:params:oauth:grant-type:device_code',
+    code_verifier: p.verifier,
+  });
+  if (r.ok && r.j.access_token) {
+    await memoriserJetons(env, r.j, null);
+    await env.CARDATA.delete('pending');
+    await env.CARDATA.delete('container'); // nouveau compte : on recrée le conteneur
+    await env.CARDATA.delete('vin');
+    await env.CARDATA.delete('data');
+    return json({ ok: true, connected: true });
+  }
+  const code = String(r.j.error || '');
+  if (code === 'authorization_pending') return json({ ok: true, pending: true });
+  if (code === 'slow_down') return json({ ok: true, pending: true, slow: true });
+  await env.CARDATA.delete('pending');
+  if (code === 'access_denied') return erreur('Accès refusé sur la page BMW.', 403);
+  if (code === 'expired_token') return erreur('Le code a expiré. Relancez la connexion.', 400);
+  return erreur(`BMW a refusé la connexion (${code || 'HTTP ' + r.statut}).`, 502);
+}
+
+export default {
+  async fetch(request, env) {
+    if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: entetesCors });
+    const chemin = new URL(request.url).pathname.replace(/\/+$/, '') || '/';
+    if (chemin === '/') return new Response('relais-cardata ok', { headers: { ...entetesCors, 'Content-Type': 'text/plain; charset=utf-8' } });
+    if (!env.CARDATA) return erreur('Espace KV « CARDATA » non lié au script.', 503);
+    if (!env.RELAY_KEY) return erreur('RELAY_KEY manquant dans les réglages du relais.', 503);
+    if (!memeTexte(request.headers.get('x-relay-key') || '', env.RELAY_KEY)) return erreur('Clé du relais incorrecte.', 401);
+    try {
+      if (chemin === '/status' && request.method === 'GET') {
+        const t = await lire(env, 'tokens');
+        const vin = await lire(env, 'vin');
+        return json({
+          ok: true,
+          configured: !!env.CLIENT_ID,
+          connected: !!(t && t.refresh && (!t.refreshExp || Date.now() < t.refreshExp)),
+          refreshUntil: t ? t.refreshExp || null : null,
+          vin: vin && vin.vin ? '…' + String(vin.vin).slice(-4) : null,
+          quotaLeft: await quotaRestant(env),
+        });
+      }
+      if (chemin === '/auth/start' && request.method === 'POST') return await demarrerConnexion(env);
+      if (chemin === '/auth/poll' && request.method === 'POST') return await sonderConnexion(env);
+      if (chemin === '/auth/logout' && request.method === 'POST') {
+        for (const k of ['tokens', 'pending', 'container', 'vin', 'data']) await env.CARDATA.delete(k);
+        return json({ ok: true });
+      }
+      if (chemin === '/data' && request.method === 'GET') {
+        return await lireVoiture(env, new URL(request.url).searchParams.get('fresh') === '1');
+      }
+      return erreur('Adresse inconnue.', 404);
+    } catch (e) {
+      if (e instanceof Erreur) return erreur(e.message, e.statut);
+      return erreur('Erreur du relais : ' + (e && e.message ? e.message : 'inconnue'), 500);
+    }
+  },
+
+  /* déclencheur Cron (facultatif, une fois par jour) : renouvelle le jeton avant que les 2 semaines ne s'écoulent */
+  async scheduled(event, env) {
+    if (!env.CARDATA || !env.CLIENT_ID) return;
+    await jetonValable(env, true);
+  },
+};
+</script>
 <script>
 (function(){
 'use strict';
@@ -1279,8 +2143,8 @@ function roadKind(km,dur){
   var v=km/(dur/60);
   return v>=80?'hwy':(v<=38?'city':'mixed');
 }
-var TABS=['plan','cal','veh','log','share','fav'];
-/* blocs que l'on peut masquer en mode Avancé : [id, groupe, libellé, précision] (les onglets Planning et Borne & véhicule restent toujours visibles) */
+var TABS=['plan','cal','veh','log','share','fav','help'];
+/* blocs que l'on peut masquer en mode Avancé : [id, groupe, libellé, précision] (les onglets Planning, Borne & véhicule et Aide restent toujours visibles) */
 var BLK_GROUPS=['Aujourd\'hui','Semaine','Trajets','Suivi','Borne & véhicule','Onglets'];
 var BLOCKS=[
   ['tonight',0,'Carte « Ce soir »','la recharge à faire, par véhicule'],
@@ -1321,8 +2185,10 @@ var BLOCKS=[
 ];
 /* préréglage « Essentiel » : masque les blocs de confort, garde l'indispensable */
 var BLK_ESSENTIAL=['tn.det','wk.chart','wk.note','ics','wi','lg.calib','year','fip','lease','veh.season','solar','fuel','tips','calc','tab.cal','tab.share','tab.fav'];
-var APP_VERSION='5.0';
-var APP_DATE='2026-10-19';
+var APP_VERSION='5.2';
+var APP_DATE='2026-10-20';
+/* les trois niveaux d'affichage, et le niveau à partir duquel chaque onglet existe */
+var LVL_NAMES=['Simplifié','Complet','Avancé'],TAB_LVL={cal:1,share:1};
 var validDateStr=function(s){
   var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(String(s));
   if(!m)return false;
@@ -1358,7 +2224,7 @@ function defaults(){
     lease:{on:false,allow:15000,start:'',months:48,odo0:0,extra:0,readings:[]},
     car:{url:'',key:'',on:false,vehId:null,recal:true,journal:true,jAuto:false,data:null,base:null,run:null,props:[],seen:[]},
     ui:{mode:'route',planVeh:null,tVeh:null,sVeh:null,calVeh:null,vtab:null,lgVeh:null,tab:'plan',theme:'auto',hrTab:'wk',
-      lastBackup:null,created:null,snooze:0,icsWeeks:'1',icsRemind:'15',adv:false,fs:0,contrast:'normal',onboard:'new',tipsOff:[],hide:[]}
+      lastBackup:null,created:null,snooze:0,icsWeeks:'1',icsRemind:'15',adv:false,lvl:0,fs:0,contrast:'normal',onboard:'new',tipsOff:[],hide:[]}
   };
 }
 var TOP=['set','veh','favs','trips','sched','geo','me','shared','cur','log','meteo','cal','ui','lease','car'];
@@ -1471,7 +2337,11 @@ function sanitize(s){
   s.set.fipPart=clamp(Math.round(num(s.set.fipPart,0)*100)/100,0,5000);
   /* installation déjà utilisée : réglages avancés visibles et pas d'assistant de démarrage */
   var hasData=['trips','log','sched'].some(function(k){return Array.isArray(s[k])&&s[k].length>0;})||!!str(rawSet.homeAddr,5).trim();
-  s.ui.adv=rawUi.adv===undefined?hasData:rawUi.adv===true;
+  /* niveau d'affichage : 0 Simplifié, 1 Complet, 2 Avancé. Sauvegardes d'avant les trois modes : l'ancien « Simple »
+     devient Complet (on garde ce qui était visible), l'ancien « Avancé » reste Avancé ; une installation neuve démarre en Simplifié */
+  var lv=Math.round(num(rawUi.lvl,NaN));
+  if([0,1,2].indexOf(lv)<0)lv=rawUi.adv===true?2:(rawUi.adv===false?1:(hasData?2:0));
+  s.ui.lvl=lv;s.ui.adv=lv===2;
   s.ui.onboard=rawUi.onboard===undefined?(hasData?'done':'new'):(rawUi.onboard==='done'?'done':'new');
   s.ui.fs=[0,1,2].indexOf(Math.round(num(s.ui.fs,0)))>=0?Math.round(num(s.ui.fs,0)):0;
   s.ui.contrast=s.ui.contrast==='high'?'high':'normal';
@@ -2446,7 +3316,7 @@ document.addEventListener('keydown',function(e){
 function confirmDel(title,text,ok){return ask({title:title,text:text,ok:ok||'Supprimer',danger:true});}
 
 function showTab(name,focus){
-  if(blkHidden('tab.'+name))name='plan';
+  if(blkHidden('tab.'+name)||S.ui.lvl<(TAB_LVL[name]||0))name='plan';
   var changed=S.ui.tab!==name;
   S.ui.tab=name;
   document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('on',t.id==='tab-'+name);});
@@ -3635,6 +4505,8 @@ function importFromHash(){
   var code;
   try{code=decodeURIComponent(h.slice(9));}catch(e){code='';}
   try{history.replaceState(null,'',location.pathname+location.search);}catch(e){}
+  /* le partage avec le foyer fait partie du mode Complet */
+  if(S.ui.lvl<1)setLevel(1);
   showTab('share');
   ask({title:'Importer un calendrier partagé ?',text:'Ce lien contient le calendrier de recharge d\'un autre membre du foyer.',ok:'Importer'}).then(function(v){if(v)doImport(code);});
 }
@@ -4116,7 +4988,7 @@ function renderTonight(){
       +sub.map(function(x,ix){return '<div class="tnSub'+(ix>1?' tnWhy':'')+'">'+esc(x)+'</div>';}).join('')
       +warn.map(function(a){return '<div class="alertMsg">'+esc(a)+'</div>';}).join('')
       +(noTrips?'<div class="tnSub">Aucun trajet encore : ajoutez ceux de la semaine pour obtenir un plan.</div><div class="row" style="margin-top:8px"><button type="button" class="btn small" data-gopv="trips">Ajouter un trajet</button></div>':'')
-      +(more.length?'<details class="tnDet" data-blk="tn.det"><summary>Détails</summary><ul>'+more.map(function(x){return '<li>'+(typeof x==='string'?esc(x):x.html)+'</li>';}).join('')+'</ul></details>':'')
+      +(more.length?'<details class="tnDet fullOnly" data-blk="tn.det"><summary>Détails</summary><ul>'+more.map(function(x){return '<li>'+(typeof x==='string'?esc(x):x.html)+'</li>';}).join('')+'</ul></details>':'')
       +batt+carLine(v)+'</div></div>';
   });
   box.innerHTML=h;
@@ -4713,8 +5585,30 @@ function applyDisplay(){
   var r=document.documentElement,u=S.ui;
   if(u.fs>0)r.setAttribute('data-fs',String(u.fs));else r.removeAttribute('data-fs');
   if(u.contrast==='high')r.setAttribute('data-contrast','high');else r.removeAttribute('data-contrast');
+  syncLvl();
   document.body.classList.toggle('simple',!u.adv);
+  [0,1,2].forEach(function(l){document.body.classList.toggle('lvl'+l,u.lvl===l);});
+  applyLvlFlags();
   applyBlocks();
+  if(S.ui.lvl<(TAB_LVL[S.ui.tab]||0))showTab('plan');
+}
+/* « adv » reste la marque du mode Avancé (anciens réglages, anciennes sauvegardes) ; s'il ne correspond plus au niveau, il l'emporte */
+function syncLvl(){
+  var u=S.ui;
+  if(u.adv&&u.lvl!==2)u.lvl=2;
+  else if(!u.adv&&u.lvl===2)u.lvl=1;
+}
+/* ce que le mode Simplifié laisse quand même voir : plusieurs véhicules déjà créés, calendrier de charge déjà choisi */
+function applyLvlFlags(){
+  var b=document.body;
+  b.classList.toggle('multi',S.veh.length>1);
+  b.classList.toggle('schedOn',S.ui.mode==='sched');
+}
+var LVL_NOW=['Simplifié : l\'essentiel pour savoir quand brancher. Les autres réglages restent actifs.','Complet : tout l\'usage courant (agenda, foyer, rappels, bilans, saison et météo). Les réglages avancés restent actifs.','Avancé : tous les outils sont affichés, et l\'affichage se personnalise bloc par bloc.'];
+function setLevel(n){
+  n=[0,1,2].indexOf(n)>=0?n:1;
+  S.ui.lvl=n;S.ui.adv=n===2;
+  applyDisplay();renderDisplayUI();save();renderAll();
 }
 function segOn(id,key,val){
   document.querySelectorAll('#'+id+' button').forEach(function(b){
@@ -4725,7 +5619,8 @@ function segOn(id,key,val){
 function renderDisplayUI(){
   segOn('fsChoice','fs',String(S.ui.fs));
   segOn('contrastChoice','ct',S.ui.contrast);
-  segOn('advChoice','adv',S.ui.adv?'1':'0');
+  segOn('advChoice','lvl',String(S.ui.lvl));
+  $('advNow').textContent=LVL_NOW[S.ui.lvl]||'';
 }
 $('fsChoice').addEventListener('click',function(e){
   var b=e.target.closest('button[data-fs]');if(!b)return;
@@ -4736,8 +5631,8 @@ $('contrastChoice').addEventListener('click',function(e){
   S.ui.contrast=b.dataset.ct==='high'?'high':'normal';applyDisplay();renderDisplayUI();save();
 });
 $('advChoice').addEventListener('click',function(e){
-  var b=e.target.closest('button[data-adv]');if(!b)return;
-  S.ui.adv=b.dataset.adv==='1';applyDisplay();renderDisplayUI();save();renderAll();
+  var b=e.target.closest('button[data-lvl]');if(!b)return;
+  setLevel(+b.dataset.lvl);
 });
 
 /* =====================================================================
@@ -4782,7 +5677,11 @@ function renderWizard(focusTitle){
       'Tarifs : <b>'+nf(S.set.hp*100,1)+'</b> c€ (pleines) · <b>'+nf(S.set.hc*100,1)+'</b> c€ (creuses)'
     ];
     h+='<p class="wizHelp">Voici ce qui sera utilisé. Il ne manque plus qu\'un premier trajet pour voir apparaître un plan de recharge.</p><ul class="wizRecap">'+items.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul>'
-      +'<p class="wizHelp">L\'affichage est en mode <b>simple</b> : vous pouvez passer en « Avancé » (saison, tarif horaire, solaire, batterie automatique, plan cafétéria, affichage personnalisable…) dans « Borne &amp; véhicule », rubrique « Apparence ».</p>';
+      +'<fieldset class="wzLvl"><legend>Niveau d\'affichage</legend>'
+      +[['Simplifié','l\'essentiel pour savoir quand brancher : une voiture, le plan, les trajets, le journal.'],['Complet','en plus : agenda, foyer, rappels, bilans, saison et météo, plusieurs voitures.'],['Avancé','tout : tarif horaire, solaire, batterie BMW, plan cafétéria, affichage sur mesure.']].map(function(o,i){
+        return '<label for="wzLvl'+i+'"><input type="radio" name="wzLvl" id="wzLvl'+i+'" value="'+i+'"'+(S.ui.lvl===i?' checked':'')+'><span><b>'+o[0]+'</b> : '+o[1]+'</span></label>';
+      }).join('')
+      +'<p class="note">Modifiable à tout moment dans l\'onglet « Aide », carte « Mode et apparence ». L\'onglet Aide contient aussi la liste de tous les réglages et des tutoriels pas à pas.</p></fieldset>';
   }
   h+='<div class="hint wizMsg" id="wizMsg" role="status"></div>';
   h+='<div class="wizNav">'+(wizStep>0?'<button type="button" class="btn sec" data-wz="prev">Précédent</button>':'')
@@ -4833,7 +5732,7 @@ function wizFinish(goTrips){
     var t=$('tonightTitle');
     if(t){t.setAttribute('tabindex','-1');try{t.focus();}catch(e){}}
   }
-  toast('Configuration enregistrée : tout se modifie dans « Borne & véhicule »');
+  toast('Configuration enregistrée : tout se modifie dans « Borne & véhicule » (mode d\'emploi dans « Aide »)');
 }
 $('wizCard').addEventListener('click',function(e){
   var b=e.target.closest('button[data-wz]');if(!b)return;
@@ -4843,6 +5742,9 @@ $('wizCard').addEventListener('click',function(e){
   else if(a==='skip'){wizFinish(false);}
   else if(a==='finish'){wizFinish(false);}
   else if(a==='trip'){wizFinish(true);}
+});
+$('wizCard').addEventListener('change',function(e){
+  if(e.target&&e.target.name==='wzLvl'){S.ui.lvl=+e.target.value;S.ui.adv=S.ui.lvl===2;applyDisplay();renderDisplayUI();save();}
 });
 $('wizCard').addEventListener('keydown',function(e){
   if(e.key!=='Enter'||!e.target||e.target.tagName!=='INPUT'||e.target.type==='checkbox')return;
@@ -5254,7 +6156,7 @@ $('blkEss').addEventListener('click',function(){
   blkMsg('Préréglage « Essentiel » appliqué : '+S.ui.hide.length+' blocs masqués. Vous pouvez en recocher à volonté.');
 });
 $('blkGo').addEventListener('click',function(){
-  showTab('veh');
+  showTab('help');setHv('set');
   var t=$('blkTitle');
   try{t.scrollIntoView({block:'start'});t.focus({preventScroll:true});}catch(e){}
   /* ouvre le premier groupe pour montrer tout de suite des cases */
@@ -5538,7 +6440,7 @@ function agoTxt(ts){
 function carLine(v){
   var d=S.car.data;
   if(!carReady()||S.car.vehId!==v.id||!d||d.soc==null)return '';
-  return '<div class="tnCar" data-blk="tn.car"><span aria-hidden="true">🔋</span> Lue sur la voiture (BMW) : <b>'+nf(d.soc,0)+' %</b>, '+agoTxt(d.ts)+(d.chg===true?' · en charge':'')+(d.range!=null?' · autonomie '+nf(d.range,0)+' km':'')+'</div>';
+  return '<div class="tnCar advOnly" data-blk="tn.car"><span aria-hidden="true">🔋</span> Lue sur la voiture (BMW) : <b>'+nf(d.soc,0)+' %</b>, '+agoTxt(d.ts)+(d.chg===true?' · en charge':'')+(d.range!=null?' · autonomie '+nf(d.range,0)+' km':'')+'</div>';
 }
 function renderCarNote(){
   var d=S.car.data,t;
@@ -5651,7 +6553,8 @@ function carFetch(force){
   var now=Date.now(),d=S.car.data;
   if(!force&&((d&&now-d.at<CAR_MIN_MS)||now-carTry<120000))return Promise.resolve(false);
   carTry=now;carBusy=true;
-  return carCall('/data').then(function(j){
+  /* lecture demandée par l'utilisateur : le relais ne ressert pas sa mémoire de 5 minutes (au plus une lecture BMW par minute) */
+  return carCall(force?'/data?fresh=1':'/data').then(function(j){
     carBusy=false;
     if(!j.ok){carErr=j.error||('erreur '+j._status);if(force)carMsg(carErr,true);renderCarNote();return false;}
     carErr='';
@@ -5748,11 +6651,351 @@ $('carProps').addEventListener('click',function(e){
     S.car.props.splice(i,1);save();renderCarProps();toast('Proposition ignorée');
   }
 });
+/* =====================================================================
+   Onglet Aide : réglages de l'appli, index de tous les réglages, tutoriels, contact
+   ===================================================================== */
+
+/* ---------- rubriques de l'aide (modèle ARIA « onglets ») ---------- */
+var HVS=['set','tuto','contact'],curHv='set';
+function setHv(name,focus){
+  if(HVS.indexOf(name)<0)name='set';
+  curHv=name;
+  HVS.forEach(function(k){
+    var on=k===name,tab=$('hvt-'+k),pan=$('hv-'+k);
+    tab.setAttribute('aria-selected',on?'true':'false');tab.tabIndex=on?0:-1;tab.classList.toggle('on',on);
+    pan.hidden=!on;
+  });
+  if(name==='contact')ctDiagRender();
+  if(focus){$('hvt-'+name).focus();window.scrollTo(0,0);}
+}
+$('helpNav').addEventListener('click',function(e){var b=e.target.closest('button[data-hv]');if(b)setHv(b.dataset.hv,true);});
+$('helpNav').addEventListener('keydown',function(e){
+  var i=HVS.indexOf(curHv),n=HVS.length,j=null;
+  if(e.key==='ArrowRight')j=(i+1)%n;else if(e.key==='ArrowLeft')j=(i+n-1)%n;else if(e.key==='Home')j=0;else if(e.key==='End')j=n-1;
+  if(j==null)return;
+  e.preventDefault();setHv(HVS[j],true);
+});
+function setAdv(on){setLevel(on?2:1);}
+
+/* ---------- index de tous les réglages ----------
+   k : clé ; g : groupe ; t : titre ; d : à quoi ça sert ; w : où le trouver ; tab / pv / hv : onglet et vue ;
+   el : élément à mettre en évidence ; adv : mode Avancé requis ; blk : blocs à réafficher s'ils sont masqués ;
+   mode : mode de planification requis ('route' : itinéraires) */
+var HELP_SET=[
+  {k:'advChoice',g:'L\'appli',t:'Mode simple ou avancé',d:'Simple n\'affiche que l\'essentiel ; Avancé montre toutes les options.',w:'Aide › Réglages › Mode et apparence',tab:'help',el:'advChoice'},
+  {k:'themeChoice',g:'L\'appli',t:'Thème clair ou sombre',d:'Automatique suit le réglage du téléphone.',w:'Aide › Réglages › Mode et apparence',tab:'help',el:'themeChoice'},
+  {k:'fsChoice',g:'L\'appli',t:'Taille du texte',d:'Normale, grande ou très grande.',w:'Aide › Réglages › Mode et apparence',tab:'help',el:'fsChoice'},
+  {k:'contrastChoice',g:'L\'appli',t:'Contraste',d:'Contraste élevé pour une lecture plus facile.',w:'Aide › Réglages › Mode et apparence',tab:'help',el:'contrastChoice'},
+  {k:'blkList',g:'L\'appli',t:'Personnaliser l\'affichage',d:'Choisir les blocs et onglets affichés.',w:'Aide › Réglages › Personnaliser l\'affichage',tab:'help',el:'blkList',lv:2},
+  {k:'wizard',g:'L\'appli',t:'Assistant de démarrage',d:'Refaire les réglages de base pas à pas.',w:'Aide › Réglages › Mode et apparence',tab:'help',el:'wizRestart'},
+  {k:'dataExport',g:'L\'appli',t:'Sauvegarder mes données',d:'Exporter un fichier de sauvegarde.',w:'Aide › Réglages › Sauvegarde des données',tab:'help',el:'dataExport'},
+  {k:'dataImportBtn',g:'L\'appli',t:'Restaurer une sauvegarde',d:'Reprendre ses données sur un nouveau téléphone.',w:'Aide › Réglages › Sauvegarde des données',tab:'help',el:'dataImportBtn'},
+  {k:'expUrl',g:'L\'appli',t:'Secrets dans la sauvegarde',d:'Inclure ou non l\'adresse iCal et la clé du relais BMW.',w:'Aide › Réglages › Sauvegarde des données',tab:'help',el:'expUrl',lv:1},
+  {k:'updBtn',g:'L\'appli',t:'Version et mises à jour',d:'Voir la version et vérifier s\'il en existe une nouvelle.',w:'Aide › Réglages › Version et mises à jour',tab:'help',el:'updBtn'},
+  {k:'vehTabs',g:'Véhicule',t:'Ajouter ou choisir un véhicule',d:'Un onglet par véhicule ; « + » pour en ajouter.',w:'Borne & véhicule › Véhicules',tab:'veh',el:'vehTabs',lv:1},
+  {k:'vColor',g:'Véhicule',t:'Couleur du véhicule',d:'Pour le reconnaître dans le planning.',w:'Borne & véhicule › Véhicules',tab:'veh',el:'vColor',lv:1},
+  {k:'vName',g:'Véhicule',t:'Nom du véhicule',d:'Le nom affiché partout dans l\'appli.',w:'Borne & véhicule › Véhicules',tab:'veh',el:'vName'},
+  {k:'vCap',g:'Véhicule',t:'Batterie utile',d:'Capacité nette de la batterie, en kWh.',w:'Borne & véhicule › Véhicules',tab:'veh',el:'vCap'},
+  {k:'vCons',g:'Véhicule',t:'Consommation',d:'kWh pour 100 km, par temps doux.',w:'Borne & véhicule › Véhicules',tab:'veh',el:'vCons'},
+  {k:'vAc',g:'Véhicule',t:'Chargeur embarqué AC',d:'Puissance maximale acceptée par la voiture sur une borne.',w:'Borne & véhicule › Véhicules',tab:'veh',el:'vAc'},
+  {k:'vMin',g:'Véhicule',t:'Minimum, alarme',d:'Alerte si un trajet ferait descendre la batterie dessous.',w:'Borne & véhicule › Véhicules › Niveaux de batterie',tab:'veh',el:'vMin'},
+  {k:'vTrig',g:'Véhicule',t:'Seuil de recharge',d:'En dessous, une recharge est programmée.',w:'Borne & véhicule › Véhicules › Niveaux de batterie',tab:'veh',el:'vTrig'},
+  {k:'vTarget',g:'Véhicule',t:'Charge cible',d:'Niveau visé quand une recharge a lieu.',w:'Borne & véhicule › Véhicules › Niveaux de batterie',tab:'veh',el:'vTarget'},
+  {k:'season',g:'Véhicule',t:'Consommation selon la saison',d:'Coefficient hiver, été, ou automatique selon la météo.',w:'Borne & véhicule › Véhicules',tab:'veh',el:'season',blk:['veh.season'],lv:1},
+  {k:'weatherOn',g:'Véhicule',t:'Météo prévue',d:'Adapter la consommation à la température prévue (Open-Meteo).',w:'Borne & véhicule › Véhicules',tab:'veh',el:'weatherOn',blk:['veh.season'],lv:1},
+  {k:'dayPref',g:'Recharge',t:'Jours préférés de charge',d:'Les jours où vous préférez brancher la voiture.',w:'Borne & véhicule › Stratégie de recharge',tab:'veh',el:'dayPref',blk:['veh.strategy']},
+  {k:'autoBoost',g:'Recharge',t:'Relever la charge avant un long trajet',d:'Charger davantage la veille si le trajet l\'exige.',w:'Borne & véhicule › Stratégie de recharge',tab:'veh',el:'autoBoost',blk:['veh.strategy'],lv:2},
+  {k:'finish',g:'Recharge',t:'Fin de charge au-dessus de 80 %',d:'Au moins cher, compromis, ou au plus près du départ.',w:'Borne & véhicule › Stratégie de recharge',tab:'veh',el:'finish',blk:['veh.strategy'],lv:2},
+  {k:'homeAddr',g:'Borne et domicile',t:'Adresse du domicile',d:'Point de départ de chaque trajet.',w:'Borne & véhicule › Borne & domicile',tab:'veh',el:'homeAddr',blk:['veh.home']},
+  {k:'borneKw',g:'Borne et domicile',t:'Puissance de la borne',d:'En kW (souvent 7,4 ou 11).',w:'Borne & véhicule › Borne & domicile',tab:'veh',el:'borneKw',blk:['veh.home']},
+  {k:'eff',g:'Borne et domicile',t:'Rendement de charge',d:'Pertes entre le compteur et la batterie.',w:'Borne & véhicule › Borne & domicile',tab:'veh',el:'eff',blk:['veh.home'],lv:1},
+  {k:'tHp',g:'Tarifs',t:'Prix heures pleines et creuses',d:'Prix du kWh, tout compris, de votre contrat.',w:'Borne & véhicule › Tarifs électricité',tab:'veh',el:'tHp',blk:['tarifs'],need:'bi'},
+  {k:'addHcSlot',g:'Tarifs',t:'Plages d\'heures creuses',d:'Les heures de nuit de votre compteur.',w:'Borne & véhicule › Tarifs électricité',tab:'veh',el:'addHcSlot',blk:['tarifs'],need:'bi'},
+  {k:'hcWeekend',g:'Tarifs',t:'Week-end en heures creuses',d:'Tout le week-end au tarif de nuit.',w:'Borne & véhicule › Tarifs électricité',tab:'veh',el:'hcWeekend',blk:['tarifs'],need:'bi'},
+  {k:'tmodeChoice',g:'Tarifs',t:'Tarif horaire ou dynamique',d:'Un prix par heure, ou les 24 prix du jour.',w:'Borne & véhicule › Tarifs électricité',tab:'veh',el:'tmodeChoice',blk:['tarifs'],lv:2},
+  {k:'refundOn',g:'Tarifs',t:'Remboursement employeur',d:'Comparer le remboursement (plan cafétéria) à votre coût réel.',w:'Borne & véhicule › Tarifs électricité',tab:'veh',el:'refundOn',blk:['tarifs','refund'],lv:2},
+  {k:'solOn',g:'Options avancées',t:'Surplus solaire',d:'Charger de préférence en journée avec vos panneaux.',w:'Borne & véhicule › Surplus solaire',tab:'veh',el:'solOn',blk:['solar'],lv:2},
+  {k:'fuelL',g:'Options avancées',t:'Comparaison avec l\'essence ou le diesel',d:'Ce que vous économisez par rapport à un thermique.',w:'Borne & véhicule › Comparaison avec l\'essence ou le diesel',tab:'veh',el:'fuelL',blk:['fuel'],lv:1},
+  {k:'carUrl',g:'Options avancées',t:'Batterie automatique BMW CarData',d:'Lire la batterie de la voiture via votre relais.',w:'Borne & véhicule › Batterie automatique (BMW CarData)',tab:'veh',el:'carUrl',blk:['carData'],lv:2},
+  {k:'cFrom',g:'Options avancées',t:'Calculateur rapide',d:'Temps et coût d\'une recharge de X à Y %.',w:'Borne & véhicule › Calculateur rapide',tab:'veh',el:'cFrom',blk:['calc'],lv:1},
+  {k:'tipsList',g:'Options avancées',t:'Conseils pour la batterie',d:'Conseils tirés de vos réglages ; masquables un par un.',w:'Borne & véhicule › Conseils pour la batterie',tab:'veh',el:'tipsCard',blk:['tips'],lv:1},
+  {k:'modeChoice',g:'Planning',t:'Mode de planification',d:'Itinéraires (l\'appli calcule) ou calendrier de charge (créneaux).',w:'Planning › Trajets',tab:'plan',pv:'trips',el:'modeChoice',blk:['mode'],lv:1},
+  {k:'trips',g:'Planning',t:'Trajets ou créneaux de la semaine',d:'Ce que l\'appli doit prévoir.',w:'Planning › Trajets',tab:'plan',pv:'trips',el:function(){return S.ui.mode==='sched'?'sVeh':'tripAccSum';}},
+  {k:'tonight',g:'Planning',t:'Batterie de ce soir',d:'La batterie réelle, pour recaler le plan.',w:'Planning › Aujourd\'hui › Ce soir',tab:'plan',pv:'today',el:'tonightCard',blk:['tonight']},
+  {k:'grid',g:'Planning',t:'Semaine en un coup d\'œil',d:'Grille des recharges sur 7 jours.',w:'Planning › Aujourd\'hui',tab:'plan',pv:'today',el:'weekGrid',blk:['grid'],lv:1},
+  {k:'planVeh',g:'Planning',t:'Véhicule affiché',d:'Choisir la voiture dont on voit le plan.',w:'Planning › Semaine',tab:'plan',pv:'week',el:'planVeh',lv:1,mode:'route'},
+  {k:'tripReady',g:'Planning',t:'« Prêt pour (%) »',d:'Niveau voulu au départ d\'un trajet.',w:'Planning › Trajets › Ajouter un itinéraire',tab:'plan',pv:'trips',el:'tripReady',lv:1,mode:'route'},
+  {k:'tripSoc',g:'Planning',t:'Batterie au départ imposée',d:'Forcer le niveau de départ d\'un trajet.',w:'Planning › Trajets › Ajouter un itinéraire',tab:'plan',pv:'trips',el:'tripSoc',lv:2,mode:'route'},
+  {k:'wiKm',g:'Planning',t:'Et si… ? (trajet exceptionnel)',d:'Tester un trajet sans toucher au plan.',w:'Planning › Trajets',tab:'plan',pv:'trips',el:'wiKm',blk:['wi'],mode:'route',lv:1},
+  {k:'icsWeeks',g:'Planning',t:'Rappels dans mon agenda',d:'Exporter les recharges et rappels (.ics).',w:'Planning › Semaine',tab:'plan',pv:'week',el:'icsWeeks',blk:['ics'],mode:'route',lv:1},
+  {k:'calUrl',g:'Agenda',t:'Adresse iCal de l\'agenda',d:'Transformer vos rendez-vous en trajets.',w:'Agenda › Synchronisation calendrier',tab:'cal',el:'calUrl',blk:['tab.cal'],lv:1},
+  {k:'calRelay',g:'Agenda',t:'Relais d\'agenda personnel',d:'Pour lire un agenda Google en un clic.',w:'Agenda › Synchronisation calendrier',tab:'cal',el:'calRelay',blk:['tab.cal'],lv:2},
+  {k:'calProxy',g:'Agenda',t:'Proxy public',d:'Autoriser ou non les services publics de lecture.',w:'Agenda › Synchronisation calendrier',tab:'cal',el:'calProxy',blk:['tab.cal'],lv:2},
+  {k:'calFileBtn',g:'Agenda',t:'Importer un fichier .ics',d:'Sans adresse ni relais.',w:'Agenda › Synchronisation calendrier',tab:'cal',el:'calFileBtn',blk:['tab.cal'],lv:1},
+  {k:'lgKwh',g:'Suivi et budget',t:'Journal de recharge',d:'Noter l\'énergie de chaque recharge.',w:'Suivi › Ajouter une recharge',tab:'log',el:'lgKwh',blk:['tab.log','lg.add']},
+  {k:'lgPrice',g:'Suivi et budget',t:'Prix de revient retenu',d:'Prix moyen du kWh pour le relevé du mois.',w:'Suivi › Relevé du mois',tab:'log',el:'lgPrice',blk:['tab.log','lg.month'],lv:2},
+  {k:'lgCalib',g:'Suivi et budget',t:'Précision de l\'appli',d:'Rendement et consommation mesurés sur votre journal.',w:'Suivi › Précision de l\'appli',tab:'log',el:'lgCalib',blk:['tab.log','lg.calib'],lv:2},
+  {k:'year',g:'Suivi et budget',t:'Bilan sur 12 mois',d:'Énergie, km et coût mois par mois.',w:'Suivi › Bilan sur 12 mois',tab:'log',el:'yearCard',blk:['tab.log','year'],lv:1},
+  {k:'lgCsv',g:'Suivi et budget',t:'Export CSV et impression',d:'Le relevé du mois en fichier ou sur papier.',w:'Suivi › Relevé du mois',tab:'log',el:'lgCsv',blk:['tab.log','lg.month'],lv:1},
+  {k:'fipPart',g:'Suivi et budget',t:'Coût mensuel complet (plan FIP)',d:'Participation au plan + électricité nette.',w:'Suivi › Coût mensuel complet',tab:'log',el:'fipPart',blk:['tab.log','fip'],lv:2},
+  {k:'leaseOn',g:'Suivi et budget',t:'Km du leasing',d:'Comparer votre rythme au forfait du contrat.',w:'Suivi › Suivi des km du leasing',tab:'log',el:'leaseOn',blk:['tab.log','lease'],lv:2},
+  {k:'meName',g:'Foyer et favoris',t:'Partage avec le foyer',d:'Envoyer et recevoir les créneaux de la borne.',w:'Foyer › Mon calendrier à partager',tab:'share',el:'meName',blk:['tab.share'],lv:1},
+  {k:'favName',g:'Foyer et favoris',t:'Adresses favorites',d:'Lieux fréquents pour vos itinéraires.',w:'Favoris',tab:'fav',el:'favName',blk:['tab.fav']}
+];
+var HS_BY={};HELP_SET.forEach(function(it){HS_BY[it.k]=it;});
+function normTxt(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[’']/g,' ');}
+function qWords(q){return normTxt(q).split(/\s+/).filter(function(w){return w.length>0;});}
+function qHit(words,text){var t=normTxt(text);return words.every(function(w){return t.indexOf(w)>=0;});}
+/* sans recherche, l'index ne montre que les réglages du mode choisi (plus, sur demande, ceux des autres modes) */
+var helpAll=false;
+function renderHelpIndex(){
+  var words=qWords($('helpQ').value),groups=[],by={},n=0,above=0;
+  HELP_SET.forEach(function(it){
+    if(words.length&&!qHit(words,it.g+' '+it.t+' '+it.d+' '+it.w))return;
+    if(!words.length&&(it.lv||0)>S.ui.lvl){above++;if(!helpAll)return;}
+    if(!by[it.g]){by[it.g]=[];groups.push(it.g);}
+    by[it.g].push(it);n++;
+  });
+  var box=$('helpIndex'),open={};
+  box.querySelectorAll('details[data-hg]').forEach(function(d){open[d.dataset.hg]=d.open;});
+  box.innerHTML=groups.map(function(g){
+    return '<details class="acc hsAcc" data-hg="'+esc(g)+'"'+(words.length||open[g]?' open':'')+'><summary>'+esc(g)+'<span class="cnt">'+by[g].length+'</span></summary><div class="accBody"><ul class="hsList">'+by[g].map(function(it){
+      var lv=it.lv||0;
+      return '<li class="hsItem"><div class="hsTxt"><b>'+esc(it.t)+'</b>'+(lv?' <span class="badge'+(lv===1?' lvC':'')+'">'+LVL_NAMES[lv]+'</span>':'')
+        +'<span class="blkD">'+esc(it.d)+'</span><span class="hsWhere">'+esc(it.w)+'</span></div>'
+        +'<button type="button" class="btn sec small" data-hgo="'+esc(it.k)+'" aria-label="'+esc('Y aller : '+it.t)+'">Y aller</button></li>';
+    }).join('')+'</ul></div></details>';
+  }).join('');
+  /* tutoriels correspondant à la recherche */
+  var tu=[];
+  if(words.length)document.querySelectorAll('#tutoList details.tuto').forEach(function(d){
+    if(qHit(words,d.textContent))tu.push(d);
+  });
+  $('helpTuHits').innerHTML=tu.length?'<p class="hsG">Tutoriels</p><div class="calRow">'+tu.slice(0,4).map(function(d){
+    var s=d.querySelector('summary');return '<button type="button" class="btn sec small" data-htu="'+esc(d.id)+'">'+esc(s.firstChild?s.firstChild.textContent:'Tutoriel')+'</button>';
+  }).join('')+'</div>':'';
+  $('helpQn').textContent=words.length?(n?n+' réglage'+(n>1?'s':'')+' trouvé'+(n>1?'s':''):'Aucun réglage ne correspond.')+(tu.length?' '+tu.length+' tutoriel'+(tu.length>1?'s':'')+' en lien.':''):n+' réglage'+(n>1?'s':'')+(helpAll||!above?'':' en mode '+LVL_NAMES[S.ui.lvl])+', classés par thème : touchez un thème pour le déplier.';
+  var more=$('helpMore');
+  if(!words.length&&above){
+    more.hidden=false;
+    more.innerHTML='<span>'+(helpAll?'Les réglages marqués « Complet » ou « Avancé » apparaissent dans ces modes ; « Y aller » change de mode pour vous.':above+' autre'+(above>1?'s':'')+' réglage'+(above>1?'s':'')+' dans les modes plus complets.')+'</span> <button type="button" class="linkBtn" id="helpAllBtn" aria-expanded="'+helpAll+'">'+(helpAll?'Ne montrer que mon mode':'Les afficher aussi')+'</button>';
+  }else{more.hidden=true;more.innerHTML='';}
+}
+document.addEventListener('click',function(e){
+  if(e.target&&e.target.id==='helpAllBtn'){helpAll=!helpAll;renderHelpIndex();var b=$('helpAllBtn');if(b)b.focus();}
+});
+$('helpQ').addEventListener('input',renderHelpIndex);
+
+/* met en évidence un élément après un saut (ouvre les <details> qui le contiennent) */
+function helpReveal(el){
+  for(var a=el.parentElement;a;a=a.parentElement){if(a.tagName==='DETAILS'&&!a.open)a.open=true;}
+  var box=el.closest('.field')||el.closest('.checkRow')||el;
+  box.classList.remove('hlGo');void box.offsetWidth;box.classList.add('hlGo');
+  setTimeout(function(){box.classList.remove('hlGo');},2600);
+  try{el.scrollIntoView({block:'center'});}catch(e){}
+  var f=el.matches('input,select,textarea,button,summary,[tabindex]')?el:el.querySelector('input,select,textarea,button,summary');
+  if(!f){el.setAttribute('tabindex','-1');f=el;}
+  try{f.focus({preventScroll:true});}catch(e){}
+}
+function helpGo(k){
+  var it=HS_BY[k];if(!it)return false;
+  var said=[],need=it.lv||0;
+  if(it.mode&&S.ui.mode!==it.mode)need=Math.max(need,1);
+  if(it.need&&S.set.tmode!==it.need)need=2;
+  if(S.ui.lvl<need){setLevel(need);said.push('Mode '+LVL_NAMES[need]+' activé');}
+  var un=(it.blk||[]).filter(function(b){return S.ui.hide.indexOf(b)>=0;});
+  if(un.length&&S.ui.adv){
+    S.ui.hide=S.ui.hide.filter(function(b){return un.indexOf(b)<0;});
+    applyBlocks();renderBlocksUI();save();said.push('ce bloc était masqué : il est de nouveau affiché');
+  }
+  var id=typeof it.el==='function'?it.el():it.el,tab=it.tab,pv=it.pv;
+  if(it.mode&&S.ui.mode!==it.mode){id='modeChoice';tab='plan';pv='trips';said.push('disponible en mode « Itinéraires »');}
+  if(it.need&&S.set.tmode!==it.need){id='tmodeChoice';said.push('choisissez d\'abord « Heures pleines / creuses »');}
+  showTab(tab);
+  if(tab==='plan')setPv(pv||'today');
+  if(tab==='help')setHv('set');
+  var el=$(id);
+  if(el)helpReveal(el);
+  if(said.length){var m=said.join(' · ');toast(m.charAt(0).toUpperCase()+m.slice(1));}
+  return true;
+}
+/* ouvre un tutoriel */
+function helpTuto(id){
+  var d=$(id);if(!d||!d.classList.contains('tuto'))return false;
+  showTab('help');setHv('tuto');
+  d.open=true;
+  var s=d.querySelector('summary');
+  try{d.scrollIntoView({block:'start'});}catch(e){}
+  try{s.focus({preventScroll:true});}catch(e){}
+  return true;
+}
+document.addEventListener('click',function(e){
+  var b=e.target.closest('[data-hgo],[data-htu],[data-gohv]');if(!b)return;
+  if(b.dataset.hgo)helpGo(b.dataset.hgo);
+  else if(b.dataset.htu)helpTuto(b.dataset.htu);
+  else{showTab('help');setHv(b.dataset.gohv,true);}
+});
+
+/* ---------- code des relais : copier ou télécharger ---------- */
+function relaySrc(n){var e=$('src-relais-'+n);return e?e.textContent.replace(/^\s*\n/,''):'';}
+document.addEventListener('click',function(e){
+  var b=e.target.closest('button[data-relay]');if(!b)return;
+  var n=b.dataset.relay==='cardata'?'cardata':'agenda',code=relaySrc(n),out=$('relayOut-'+n);
+  if(!code){toast('Code du relais introuvable dans cette copie de l\'appli');return;}
+  if(b.dataset.ract==='dl'){saveFile('relais-'+n+'.js',code,'text/javascript');toast('Fichier relais-'+n+'.js enregistré');return;}
+  copyText(code).then(function(ok){
+    if(ok){
+      out.hidden=false;out.innerHTML='<p class="okTxt">Code copié ('+nf(code.split('\n').length,0)+' lignes). Collez-le dans l\'éditeur Cloudflare à la place du code existant.</p>';
+      toast('Code du relais copié');
+    }else{
+      /* presse-papiers indisponible : le code s'affiche, prêt à être sélectionné */
+      out.hidden=false;
+      out.innerHTML='<p class="note">Copie automatique impossible sur cet appareil : sélectionnez tout le texte ci-dessous, puis copiez-le.</p><textarea readonly rows="8" spellcheck="false" aria-label="Code du relais"></textarea>';
+      var ta=out.querySelector('textarea');ta.value=code;
+      try{ta.focus();ta.select();}catch(err){}
+    }
+  });
+});
+
+/* ---------- clé du relais BMW générée au hasard ---------- */
+function randomKey(n){
+  var abc='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789',out='',buf=new Uint8Array(1);
+  var c=window.crypto||window.msCrypto;
+  while(out.length<n){
+    if(c&&c.getRandomValues){c.getRandomValues(buf);}else{buf[0]=Math.floor(Math.random()*256);}
+    if(buf[0]<abc.length*Math.floor(256/abc.length))out+=abc.charAt(buf[0]%abc.length);
+  }
+  return out;
+}
+function genKeyMsg(t,err){var e=$('genKeyMsg');e.textContent=t||'';e.className='hint'+(err?' warn':'');}
+$('genKey').addEventListener('click',function(){
+  $('genKeyOut').value=randomKey(32);$('genKeyBox').hidden=false;
+  genKeyMsg('Clé générée : copiez-la dans Cloudflare (secret RELAY_KEY), puis enregistrez-la dans l\'appli.',false);
+});
+$('genKeyCopy').addEventListener('click',function(){
+  var k=$('genKeyOut').value;if(!k)return;
+  copyText(k).then(function(ok){
+    if(ok)genKeyMsg('Clé copiée. Collez-la comme valeur du secret RELAY_KEY dans Cloudflare.',false);
+    else{genKeyMsg('Copie automatique impossible : sélectionnez la clé et copiez-la.',true);try{$('genKeyOut').focus();$('genKeyOut').select();}catch(e){}}
+  });
+});
+$('genKeyUse').addEventListener('click',function(){
+  var k=$('genKeyOut').value;if(!k)return;
+  var apply=function(){
+    S.car.key=k;save();fillCarUI();
+    genKeyMsg('Clé enregistrée dans l\'appli (« Clé du relais »). Elle doit être identique au secret RELAY_KEY de Cloudflare.',false);
+  };
+  if(S.car.key&&S.car.key!==k){
+    ask({title:'Remplacer la clé du relais ?',text:'Une autre clé est déjà enregistrée dans l\'appli. Si votre relais utilise encore l\'ancienne, la lecture de la batterie ne fonctionnera plus tant que vous n\'aurez pas mis la nouvelle dans Cloudflare.',ok:'Remplacer'}).then(function(ok){if(ok)apply();});
+  }else apply();
+});
+
+/* ---------- formulaire de contact ----------
+   Envoi par Web3Forms : la clé d'accès est publique par conception (elle n'identifie que la boîte de réception
+   de destination, sans en montrer l'adresse). Laisser vide tant qu'aucune clé n'a été créée. */
+var CONTACT_KEY='';
+var CONTACT_URL='https://api.web3forms.com/submit';
+var CT_LS='evplan.contact',ctBusy=false;
+function ctLoad(){try{var j=JSON.parse(localStorage.getItem(CT_LS)||'null');return isObj(j)?j:{};}catch(e){return {};}}
+function ctStore(o){try{localStorage.setItem(CT_LS,JSON.stringify(o));}catch(e){}}
+function ctSent(){var d=ctLoad(),now=Date.now();return (Array.isArray(d.sent)?d.sent:[]).filter(function(t){return typeof t==='number'&&t<=now+60000&&now-t<864e5;});}
+function ctOut(t,cls){var e=$('ctOut');e.textContent=t||'';e.className='hint'+(cls?' '+cls:'');}
+function ctDraftSave(){
+  var d=ctLoad();
+  d.n=str($('ctName').value,60);d.m=str($('ctMail').value,120);d.t=$('ctTopic').value;d.x=str($('ctMsgIn').value,3000);d.dg=$('ctDiag').checked;
+  d.sent=ctSent();ctStore(d);
+}
+function ctCount(){var n=$('ctMsgIn').value.length;$('ctCount').textContent=nf(n,0)+' / 3 000 caractères (10 au minimum)';}
+function ctFill(){
+  var d=ctLoad();
+  $('ctName').value=str(d.n,60);$('ctMail').value=str(d.m,120);$('ctMsgIn').value=str(d.x,3000);
+  if(['Question','Problème','Suggestion','Autre'].indexOf(d.t)>=0)$('ctTopic').value=d.t;
+  $('ctDiag').checked=d.dg===true;
+  ctCount();
+}
+function ctDiagText(){
+  var inst=false;try{inst=!!(navigator.serviceWorker&&navigator.serviceWorker.controller);}catch(e){}
+  var u=S.ui,L=[];
+  L.push('Version : '+APP_VERSION+' du '+APP_DATE+(inst?' (installée)':' (non installée)'));
+  L.push('Affichage : mode '+(LVL_NAMES[u.lvl]||'?')+', texte '+(['normal','grand','très grand'][u.fs]||'normal')+', contraste '+(u.contrast==='high'?'élevé':'normal')+', thème '+({auto:'automatique',light:'clair',dark:'sombre'}[u.theme]||'automatique')+(u.adv&&u.hide.length?', '+u.hide.length+' bloc(s) masqué(s)':''));
+  L.push('Planification : '+(u.mode==='sched'?'calendrier de charge':'itinéraires')+' · véhicules : '+S.veh.length+' · trajets : '+S.trips.length+' · recharges notées : '+S.log.length);
+  L.push('Tarif : '+(S.set.tmode==='hourly'?'horaire':'pleines/creuses')+(S.set.solOn?' · solaire':'')+(refundOn()?' · remboursement employeur':''));
+  L.push('Agenda : '+(S.cal.url?'adresse enregistrée':'aucune adresse')+(S.cal.relay?' · relais configuré':'')+' · proxy public '+(S.cal.proxy?'autorisé':'refusé'));
+  L.push('BMW CarData : '+(carReady()?'relais configuré'+(S.car.on?', lecture automatique':'')+(S.car.data?', dernière lecture '+agoTxt(S.car.data.at):''):'non configuré')+(carErr?' · dernier incident : '+carErr:''));
+  L.push('Suivi du leasing : '+(S.lease.on?'oui':'non')+' · membres du foyer reçus : '+S.shared.length);
+  try{L.push('Écran : '+screen.width+'×'+screen.height+' · langue : '+navigator.language);}catch(e){}
+  L.push('Navigateur : '+String(navigator.userAgent||'inconnu').slice(0,180));
+  return L.join('\n');
+}
+function ctDiagRender(){$('ctDiagTxt').textContent=ctDiagText();}
+['ctName','ctMail','ctTopic','ctMsgIn','ctDiag'].forEach(function(id){
+  $(id).addEventListener(id==='ctTopic'||id==='ctDiag'?'change':'input',function(){if(id==='ctMsgIn')ctCount();ctDraftSave();});
+});
+document.querySelector('.ctDiagBox').addEventListener('toggle',ctDiagRender);
+var CT_MAIL=/^[^\s@<>()[\]\\,;:"]+@[^\s@<>()[\]\\,;:"]+\.[A-Za-z]{2,}$/;
+$('ctForm').addEventListener('submit',function(e){
+  e.preventDefault();
+  if(ctBusy)return;
+  var name=$('ctName').value.trim(),mail=$('ctMail').value.trim(),topic=$('ctTopic').value,msg=$('ctMsgIn').value.trim();
+  ctDraftSave();
+  /* robot qui remplit tout : on fait comme si, sans rien envoyer */
+  if($('ctBot').checked){ctOut('Message envoyé, merci !','okTxt');return;}
+  if(!CT_MAIL.test(mail)){ctOut('Indiquez une adresse e-mail valide : elle sert à vous répondre.','warn');$('ctMail').focus();return;}
+  if(msg.length<10){ctOut('Votre message est trop court (10 caractères au minimum).','warn');$('ctMsgIn').focus();return;}
+  var sent=ctSent(),now=Date.now();
+  if(sent.length&&now-Math.max.apply(null,sent)<60000){ctOut('Vous venez d\'envoyer un message : patientez une minute avant le suivant.','warn');return;}
+  if(sent.length>=5){ctOut('Vous avez déjà envoyé 5 messages aujourd\'hui : réessayez demain. Votre message est conservé ici.','warn');return;}
+  if(!CONTACT_KEY){ctOut('L\'envoi n\'est pas encore activé sur cette copie de l\'appli. Votre message est conservé ici ; réessayez après la prochaine mise à jour.','warn');return;}
+  if(navigator.onLine===false){ctOut('Vous êtes hors ligne : votre message est conservé ici. Renvoyez-le quand vous aurez du réseau.','warn');return;}
+  var body={access_key:CONTACT_KEY,subject:'[Planificateur de recharge] '+topic+(name?' – '+name.slice(0,60):''),from_name:'Planificateur de recharge',
+    name:name.slice(0,60)||'(non indiqué)',email:mail.slice(0,120),sujet:topic,message:msg.slice(0,3000),botcheck:false};
+  if($('ctDiag').checked)body.informations_techniques=ctDiagText();
+  ctBusy=true;$('ctSend').disabled=true;ctOut('Envoi en cours…','');
+  var ctl=typeof AbortController!=='undefined'?new AbortController():null,tm=ctl?setTimeout(function(){ctl.abort();},20000):null;
+  var done=function(){ctBusy=false;$('ctSend').disabled=false;clearTimeout(tm);};
+  fetch(CONTACT_URL,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(body),signal:ctl?ctl.signal:undefined})
+    .then(function(r){return r.json().catch(function(){return null;}).then(function(j){return {st:r.status,j:j};});})
+    .then(function(x){
+      done();
+      var j=isObj(x.j)?x.j:{};
+      if(x.st===200&&j.success!==false){
+        var d=ctLoad();d.x='';d.sent=ctSent().concat([Date.now()]);ctStore(d);
+        $('ctMsgIn').value='';ctCount();
+        ctOut('Message envoyé, merci ! La réponse arrivera à '+mail+'.','okTxt');
+        toast('Message envoyé');
+        return;
+      }
+      if(x.st===429){ctOut('Trop de messages envoyés ces dernières minutes : réessayez plus tard. Votre message est conservé ici.','warn');return;}
+      var why=String((j.body&&j.body.message)||j.message||('erreur '+x.st)).slice(0,120);
+      ctOut('L\'envoi a échoué ('+why+'). Votre message est conservé ici : réessayez dans un moment.','warn');
+    },function(err){
+      done();
+      ctOut(err&&err.name==='AbortError'?'Le service d\'envoi ne répond pas : votre message est conservé ici, réessayez plus tard.':'Envoi impossible (pas de réseau ou service injoignable) : votre message est conservé ici, réessayez plus tard.','warn');
+    });
+});
+
+/* la barre d'onglets peut passer sur deux lignes (texte agrandi, petit écran) : le bas de page suit sa hauteur réelle,
+   pour que rien ne reste caché dessous (la hauteur mesurée comprend la zone de sécurité du bas de l'écran) */
+function fitTabsPad(){
+  var t=$('tabsNav');if(!t||!t.offsetHeight)return;
+  document.documentElement.style.setProperty('--tabsH',t.offsetHeight+'px');
+}
+function watchTabsPad(){
+  fitTabsPad();
+  try{if(typeof ResizeObserver!=='undefined'){new ResizeObserver(fitTabsPad).observe($('tabsNav'));return;}}catch(e){}
+  window.addEventListener('resize',fitTabsPad);
+}
+function initHelp(){
+  watchTabsPad();
+  ctFill();renderHelpIndex();setHv('set');
+}
+initHelp();
 
 /* =====================================================================
    Rendu global + démarrage
    ===================================================================== */
 function renderAll(){
+  applyLvlFlags();
   renderPlan();renderTrips();renderSched();renderFavs();renderShare();renderTonight();renderGrid();renderLog();renderBackup();renderExtras();renderFip();renderLease();renderCarProps();renderCarNote();
 }
 /* (ré)affiche tout depuis l'état courant : démarrage et import d'une sauvegarde */
