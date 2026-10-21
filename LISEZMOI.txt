@@ -25,6 +25,13 @@ téléphone (anglais si celle-ci n'est ni le français, ni l'anglais, ni le née
 changer dans « Aide » > « Réglages » > « Langue », ou dès la première page de l'assistant.
 Le nom de l'application sur l'écran d'accueil reste « Recharge EV » dans toutes les langues.
 
+VERSION 5.9.3 (licences et crédits)
+  - Prix du marché : mention corrigée (Energy-Charts / Fraunhofer ISE, usage non commercial ; prix de
+    la bourse EPEX SPOT).
+  - Crédits OpenStreetMap et Open-Meteo affichés à côté des adresses, des itinéraires et de la météo.
+  - Base des modèles : les 11 modèles ajoutés depuis avril 2025 utilisent les données des constructeurs
+    (consommation WLTP) au lieu de valeurs relevées sur EV Database.
+
 VERSION 5.9.2 (sécurité et fiabilité)
   - Agenda : les proxys publics, qui recevaient l'adresse iCal secrète quand la lecture directe
     échouait, sont désactivés par défaut (message affiché une fois ; réactivables, avec avertissement).
@@ -44,7 +51,8 @@ NOUVEAUTÉS DE LA VERSION 5.9
     prix moyen officiel en Allemagne (0,34 €/kWh en 2026). Ailleurs, le tarif se saisit à la main.
     Une appli déjà utilisée demande le pays une fois, par un bandeau sur l'écran « Aujourd'hui ».
   - Contrats : Tarif Impact (Wallonie), tarif capacitaire (Flandre) et contrat dynamique au prix du
-    marché du jour et du lendemain (Energy-Charts, Fraunhofer ISE, licence CC BY 4.0).
+    marché du jour et du lendemain (Energy-Charts / Fraunhofer ISE, données pour un usage non
+    commercial ; prix de la bourse EPEX SPOT).
   - Congés, jours fériés, type de raccordement de la maison, note de frais mensuelle en PDF.
   - Écran « Aujourd'hui » plus court (résumé par voiture, ligne « Demain ») ; grille ou liste dans
     « Semaine ».
@@ -160,9 +168,10 @@ BASE DES MODÈLES DE VOITURES (onglet « Borne & véhicule » > « Mon modèle �
 784 versions de 70 marques, intégrées à l'appli (aucune connexion nécessaire). Source principale :
 Open EV Data (https://github.com/KilowattApp/open-ev-data), licence MIT avec attribution, mise à jour
 d'avril 2025, nettoyée des fiches en double ou mal nommées. Les modèles sortis depuis (BMW iX3 Neue Klasse,
-Renault Twingo E-Tech, Kia EV5, Nissan Leaf 2025…) ont été ajoutés avec des valeurs relevées sur EV Database
-(ev-database.org). La base donne la consommation réelle moyenne ; l'appli en déduit la consommation par
-temps doux (× 0,87) et ajoute elle-même l'effet du froid.
+Renault Twingo E-Tech, Kia EV5, Nissan Leaf 2025…) ont été ajoutés avec les données publiées par les
+constructeurs (batterie, consommation WLTP, chargeur AC de série). Pour Open EV Data, l'appli déduit de la
+consommation réelle moyenne la consommation par temps doux (× 0,87) ; pour les données constructeur, la
+consommation WLTP est utilisée telle quelle. Dans les deux cas, l'appli ajoute elle-même l'effet du froid.
 
 PREMIER LANCEMENT
 L'appli guide la mise en service en trois temps : un assistant de réglages (voiture choisie dans la base
