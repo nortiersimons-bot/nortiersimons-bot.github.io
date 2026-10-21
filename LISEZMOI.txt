@@ -18,11 +18,29 @@ Vos données restent sur le téléphone (rien n'est envoyé à un serveur). Pens
 exporter une sauvegarde de temps en temps (onglet « Aide » > « Réglages » > « Sauvegarde des données »).
 Trois modes d'affichage (Simplifié, Complet, Avancé) se choisissent dans « Aide » > « Réglages » ou dans
 l'assistant de démarrage. L'onglet « Aide » contient aussi la liste de tous les réglages et des tutoriels pas à pas
-(agenda Google, BMW CarData, tarifs, sauvegarde…), ainsi qu'un formulaire de contact.
+(agenda Google, BMW CarData, tarifs, sauvegarde…) ; le formulaire de contact n'apparaît qu'une fois sa
+clé ajoutée (voir « Formulaire de contact » plus bas).
 L'appli existe en français, en anglais et en néerlandais. Par défaut, elle suit la langue du
 téléphone (anglais si celle-ci n'est ni le français, ni l'anglais, ni le néerlandais) ; on peut la
 changer dans « Aide » > « Réglages » > « Langue », ou dès la première page de l'assistant.
 Le nom de l'application sur l'écran d'accueil reste « Recharge EV » dans toutes les langues.
+
+NOUVEAUTÉS DE LA VERSION 5.9
+  - Pays du domicile : Belgique (Wallonie, Bruxelles, Flandre), France, Pays-Bas, Luxembourg,
+    Allemagne ou autre. Il règle les plages d'heures creuses par défaut, les jours fériés (calculés
+    dans l'appli, sans connexion) et le remboursement officiel : tarif CREG du trimestre en Belgique,
+    prix moyen officiel en Allemagne (0,34 €/kWh en 2026). Ailleurs, le tarif se saisit à la main.
+    Une appli déjà utilisée demande le pays une fois, par un bandeau sur l'écran « Aujourd'hui ».
+  - Contrats : Tarif Impact (Wallonie), tarif capacitaire (Flandre) et contrat dynamique au prix du
+    marché du jour et du lendemain (Energy-Charts, Fraunhofer ISE, licence CC BY 4.0).
+  - Congés, jours fériés, type de raccordement de la maison, note de frais mensuelle en PDF.
+  - Écran « Aujourd'hui » plus court (résumé par voiture, ligne « Demain ») ; grille ou liste dans
+    « Semaine ».
+  - Notifications envoyées par le relais BMW (voir l'étape D plus bas).
+  À FAIRE si vous utilisez un relais : recollez le code de relais/relais-cardata.js (et de
+  relais/relais-agenda.js pour le contrat dynamique) dans votre Worker, puis « Deploy ». Pour le relais
+  BMW, passez aussi le déclencheur Cron à   */5 * * * *   (étape B6). Secrets, espace KV et connexion
+  BMW sont conservés.
 
 SYNCHRONISATION DE L'AGENDA PAR ADRESSE iCal SECRÈTE
 Google n'autorise pas la lecture directe d'un agenda depuis une page web. Deux solutions fiables :
@@ -33,6 +51,7 @@ Google n'autorise pas la lecture directe d'un agenda depuis une page web. Deux s
      visible dans le Worker > « Settings » > « Domains & Routes ») dans l'onglet Agenda > « Mon relais
      personnel » et touchez « Tester le relais ».
   Pas à pas détaillé dans l'appli : « Aide » > « Tutoriels » > « Connecter un agenda Google ».
+  Le relais d'agenda sert aussi, en secours, les prix du marché d'un contrat dynamique.
 
 MISES À JOUR (version 5.0 et suivantes)
 Quand vous recevez une nouvelle version, remplacez les fichiers sur l'hébergeur par ceux du nouveau
@@ -45,7 +64,8 @@ BATTERIE AUTOMATIQUE : BMW CARDATA (facultatif, mode « Avancé »)
 onglet « Aide » > « Tutoriels » > « Batterie automatique BMW CarData ».)
 But : que l'appli lise elle-même le niveau de batterie (et le compteur km) de la voiture, au lieu de
 le saisir à la main. Le plan se recale alors tout seul, les recharges terminées vous sont proposées
-pour le journal, et le compteur alimente le suivi des km du leasing.
+pour le journal, le compteur alimente le suivi des km du leasing, et le relais peut vous envoyer des
+notifications (étape D).
 Avant de commencer : dans l'appli My BMW, la voiture doit être sur votre compte comme conducteur
 principal (pas comme invité) ; BMW n'envoie les données qu'au conducteur principal. BMW ne propose
 CarData que dans certains pays et pour certains modèles : si rien ne remonte, l'appli continue de
@@ -75,9 +95,10 @@ fonctionner comme avant, avec la saisie manuelle. Faites les étapes A et B sur 
        RELAY_KEY   un mot de passe long de votre choix (20 caractères ou plus, au hasard ;
                    l'appli peut le générer)
      puis « Add variable and deploy ». Un secret enregistré n'est plus lisible : gardez la clé.
-  6. Conseillé : « Settings » > « Trigger Events » > « Cron Triggers » : remplacez l'exemple proposé
-     par   0 6 * * *   (heure UTC : 8 h en été, 7 h en hiver en Belgique). Le relais renouvelle ainsi
-     chaque jour sa connexion à BMW (elle expire après 2 semaines sans usage).
+  6. Conseillé, et indispensable pour les notifications : « Settings » > « Trigger Events » >
+     « Cron Triggers » : remplacez l'exemple proposé par   */5 * * * *   (toutes les 5 minutes).
+     Le relais renouvelle ainsi sa connexion à BMW (elle expire après 2 semaines sans usage) et
+     regarde s'il a une notification à envoyer. Il ne lit la voiture qu'aux moments prévus par le plan.
   7. Adresse du Worker : « Settings » > « Domains & Routes », ligne « workers.dev » (ou bouton
      « Visit »). Forme : https://mon-relais-bmw.xxxx.workers.dev, où xxxx est le nom propre à votre
      compte Cloudflare. Ouverte dans un navigateur, elle doit afficher « relais-cardata ok ».
@@ -91,9 +112,23 @@ fonctionner comme avant, avec la saisie manuelle. Faites les étapes A et B sur 
   4. « Lire la batterie maintenant » pour vérifier, puis cochez ce que vous voulez automatiser :
      lecture à l'ouverture de l'appli, recalage du plan, détection des recharges pour le journal.
 
+Étape D : les notifications (facultatif)
+  1. Installez l'appli sur l'écran d'accueil et ouvrez-la depuis son icône (obligatoire sur iPhone,
+     iOS 16.4 ou plus récent).
+  2. Vérifiez le déclencheur Cron   */5 * * * *   du relais (étape B6).
+  3. « Batterie automatique (BMW CarData) » > « Notifications » : cochez « Recevoir les notifications
+     sur ce téléphone », acceptez la demande du téléphone, choisissez les messages (« Branchez ce
+     soir », recharge pas démarrée, recharge terminée, batterie sous le minimum), puis « Envoyer une
+     notification d'essai ».
+  Le relais garde le plan des 7 prochains jours, tel qu'à votre dernier passage dans l'appli, et
+  vérifie l'état de la voiture avant chaque message. Ses clés d'envoi (VAPID) sont créées toutes
+  seules dans l'espace KV ; les messages passent par le service de notification du téléphone
+  (Google, Apple, Mozilla ou Microsoft), chiffrés de bout en bout.
+
 Limites à connaître
   - BMW autorise 50 lectures par jour : l'appli lit au plus toutes les 10 minutes et le relais garde
-    une marge (45 par jour) et mémorise la dernière réponse 5 minutes.
+    une marge (45 par jour) et mémorise la dernière réponse 5 minutes. Les notifications utilisent
+    quelques lectures par jour (au branchement, au début et à la fin de chaque recharge prévue).
   - La voiture ne remonte ses données que lorsqu'elle le décide : la batterie lue peut dater de
     quelques minutes ou heures (l'appli affiche l'ancienneté).
   - L'énergie d'une recharge détectée est une estimation faite à partir de la batterie : corrigez-la
@@ -107,8 +142,7 @@ apparaisse dans l'appli. Pour l'activer, il faut une « clé d'accès » Web3For
 messages par mois) : créez-la sur web3forms.com avec l'adresse qui doit recevoir les messages,
 puis placez-la dans la ligne  var CONTACT_KEY='';  de index.html (entre les apostrophes).
 Cette clé est publique par conception : elle ne permet que d'envoyer un message vers votre boîte.
-Tant qu'elle est vide, le formulaire s'affiche mais indique que l'envoi n'est pas encore activé
-(le message tapé reste conservé sur le téléphone).
+Tant qu'elle est vide, l'onglet « Contact » et les liens « Écrivez-moi » des tutoriels sont masqués.
 
 BASE DES MODÈLES DE VOITURES (onglet « Borne & véhicule » > « Mon modèle »)
 784 versions de 70 marques, intégrées à l'appli (aucune connexion nécessaire). Source principale :
@@ -121,6 +155,7 @@ temps doux (× 0,87) et ajoute elle-même l'effet du froid.
 PREMIER LANCEMENT
 L'appli guide la mise en service en trois temps : un assistant de réglages (voiture choisie dans la base
 des modèles, domicile et borne, tarifs, mode d'affichage), puis une visite guidée de l'écran (11 à 13
-étapes selon le mode, environ 2 minutes), puis l'ajout du premier trajet. Une appli déjà utilisée la propose aussi une fois, à la première ouverture après la mise à jour,
-avec un mot sur les nouveautés. La visite se quitte à tout moment
+étapes selon le mode, environ 2 minutes), puis l'ajout du premier trajet. Une appli déjà utilisée
+affiche plutôt, une fois après la mise à jour, la liste des nouveautés, avec un bouton vers la visite
+guidée. La visite se quitte à tout moment
 (bouton ou touche Échap) et se revoit dans « Aide » > « Réglages » > « Revoir la visite guidée ».
