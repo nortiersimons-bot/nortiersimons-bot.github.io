@@ -366,16 +366,24 @@ async function chiffrer(abo, texte) {
   return concat(entete, chiffre);
 }
 /* services de notification connus : le relais n'envoie rien ailleurs */
-const SERVICES_PUSH = ['fcm.googleapis.com', 'android.googleapis.com', 'updates.push.services.mozilla.com', 'push.services.mozilla.com', '.push.apple.com', '.notify.windows.com'];
-function aboValide(s) {
-  if (!s || typeof s !== 'object' || !s.keys) return null;
+/* services de notification des navigateurs (Chrome et dérivés : Google ; Firefox : Mozilla ; Safari : Apple ; Edge : Microsoft) */
+const SERVICES_PUSH = ['.googleapis.com', '.google.com', '.mozilla.com', '.push.apple.com', '.notify.windows.com'];
+const b64uNet = (x) => String(x || '').trim().replace(/=+$/, '').replace(/\+/g, '-').replace(/\//g, '_');
+/* inscription d'un appareil : { abo } si elle est utilisable, sinon { pourquoi } (raison affichée dans l'appli) */
+function aboVerif(s) {
+  if (!s || typeof s !== 'object') return { pourquoi: 'abonnement absent' };
   let u;
-  try { u = new URL(String(s.endpoint || '')); } catch (e) { return null; }
-  if (u.protocol !== 'https:' || u.username || u.password) return null;
-  if (!SERVICES_PUSH.some((h) => (h.startsWith('.') ? u.hostname.endsWith(h) : u.hostname === h))) return null;
-  const p = String(s.keys.p256dh || ''), a = String(s.keys.auth || '');
-  if (!/^[A-Za-z0-9_-]{80,100}$/.test(p) || !/^[A-Za-z0-9_-]{16,32}$/.test(a)) return null;
-  return { endpoint: u.href, keys: { p256dh: p, auth: a } };
+  try { u = new URL(String(s.endpoint || '')); } catch (e) { return { pourquoi: 'adresse du service illisible' }; }
+  if (u.protocol !== 'https:' || u.username || u.password) return { pourquoi: 'adresse du service non sécurisée' };
+  const h = u.hostname.toLowerCase();
+  if (!SERVICES_PUSH.some((d) => h === d.slice(1) || h.endsWith(d))) return { pourquoi: 'service ' + h + ' non reconnu' };
+  const k = s.keys && typeof s.keys === 'object' ? s.keys : {};
+  const p = b64uNet(k.p256dh), a = b64uNet(k.auth);
+  let pb, ab;
+  try { pb = b64uDec(p); ab = b64uDec(a); } catch (e) { return { pourquoi: 'clés de chiffrement illisibles' }; }
+  if (pb.length !== 65 || pb[0] !== 4) return { pourquoi: 'clé p256dh invalide (' + pb.length + ' octets)' };
+  if (ab.length !== 16) return { pourquoi: 'clé auth invalide (' + ab.length + ' octets)' };
+  return { abo: { endpoint: u.href, keys: { p256dh: p, auth: a } } };
 }
 async function envoyerA(env, abo, message, contact) {
   const v = await clesVapid(env);
@@ -580,8 +588,9 @@ export default {
         try { b = await request.json(); } catch (e) { return erreur('Demande illisible.', 400); }
         if (!b || typeof b !== 'object') return erreur('Demande illisible.', 400);
         if (chemin === '/push/sub') {
-          const abo = aboValide(b.sub);
-          if (!abo) return erreur('Inscription aux notifications refusée (service inconnu ou clés invalides).', 400);
+          const v = aboVerif(b.sub);
+          if (!v.abo) return erreur('Inscription aux notifications refusée : ' + v.pourquoi + '.', 400);
+          const abo = v.abo;
           let abos = ((await lire(env, 'push:subs')) || []).filter((a) => a.endpoint !== abo.endpoint);
           if (b.on !== false) abos = abos.concat([abo]).slice(-6);
           await ecrire(env, 'push:subs', abos);

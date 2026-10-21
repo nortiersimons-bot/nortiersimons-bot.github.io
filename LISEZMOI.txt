@@ -25,6 +25,18 @@ téléphone (anglais si celle-ci n'est ni le français, ni l'anglais, ni le née
 changer dans « Aide » > « Réglages » > « Langue », ou dès la première page de l'assistant.
 Le nom de l'application sur l'écran d'accueil reste « Recharge EV » dans toutes les langues.
 
+VERSION 5.9.2 (sécurité et fiabilité)
+  - Agenda : les proxys publics, qui recevaient l'adresse iCal secrète quand la lecture directe
+    échouait, sont désactivés par défaut (message affiché une fois ; réactivables, avec avertissement).
+  - Données : alerte si l'enregistrement échoue (stockage plein ou bloqué), seconde copie dans
+    IndexedDB relue si les données principales sont vides, abîmées ou plus anciennes, copie téléchargée
+    automatiquement avant chaque restauration, état du stockage dans « Aide » > « Réglages ».
+  - Alerte quand la puissance disponible (tarif capacitaire, raccordement) passe sous le minimum de
+    charge de la voiture (≈ 4,1 kW en triphasé, ≈ 1,4 kW en monophasé).
+  - Code de partage du foyer : date de génération et rappel qu'il est codé, pas chiffré.
+  - Économies estimées selon deux scénarios nommés ; historique des versions dans l'Aide.
+  - Relais BMW (5.9.1) : inscription aux notifications acceptée pour tous les navigateurs courants.
+
 NOUVEAUTÉS DE LA VERSION 5.9
   - Pays du domicile : Belgique (Wallonie, Bruxelles, Flandre), France, Pays-Bas, Luxembourg,
     Allemagne ou autre. Il règle les plages d'heures creuses par défaut, les jours fériés (calculés
