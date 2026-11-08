@@ -1,7 +1,7 @@
 /* Service worker du Planificateur de recharge EV : permet l'utilisation hors connexion.
    Seuls les fichiers de l'appli (même origine) sont mis en cache ; les services externes
    (adresses, itinéraires, météo) ne sont jamais interceptés. */
-const VERSION = 'e510af5bef';
+const VERSION = 'e510af5bef-2';
 const CACHE = 'evplan-' + VERSION;
 const FILES = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/icon-maskable-192.png', './icons/icon-maskable-512.png', './icons/apple-touch-icon.png', './icons/favicon.svg', './icons/badge-96.png'];
 
@@ -22,6 +22,7 @@ self.addEventListener('fetch', (e) => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;           // services externes : jamais interceptés
+  if (url.pathname.startsWith('/life/')) return;             // autres applis du site (LIFE) : jamais interceptées
   if (req.mode === 'navigate') {
     // page : réseau d'abord (nouvelle version dès qu'elle existe) ; si le réseau est absent ou trop lent (> 4 s), version en cache
     const fromCache = () => caches.match('./index.html').then((r) => r || caches.match('./'));
